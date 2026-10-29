@@ -52,7 +52,12 @@ def load_smtp_credentials():
         or os.environ.get("SMARTKRUSHI_SMTP_PASS")
         or ""
     ).replace(" ", "").strip()
-    return smtp_email, smtp_pass
+    brevo_key = (
+        env_vars.get("BREVO_API_KEY")
+        or os.environ.get("BREVO_API_KEY")
+        or ""
+    ).strip()
+    return smtp_email, smtp_pass, brevo_key
 
 
 def init_db():
@@ -142,8 +147,7 @@ def send_real_smtp_or_log(payload):
     body = payload.get("body", "")
     html_body = payload.get("html_body", "")
 
-    smtp_user, smtp_pass = load_smtp_credentials()
-    brevo_key = (os.environ.get("BREVO_API_KEY") or "").strip()
+    smtp_user, smtp_pass, brevo_key = load_smtp_credentials()
     delivery_status = "Pending SMTP App Password in .env"
     sent_live = False
 
