@@ -90,14 +90,14 @@
     <div id="ordersContainer"></div>
   </div>
 
-  <script src="../js/smart_krushi_core.js"></script>
+  <script src="../js/smart_krushi_core.js?v=20261030_09"></script>
   <script>
     if (!SmartKrushi.requireAuth('farmer')) {
       // Redirects automatically
     }
 
     const currentFarmer = SmartKrushi.getFarmerSession() || {};
-    let allOrders = SmartKrushi.getFarmerOrders(currentFarmer.farmer_id || 63);
+    let allOrders = SmartKrushi.getFarmerOrders(currentFarmer);
     let currentFilter = 'all';
 
     function updateStats() {
@@ -272,7 +272,7 @@
     function markReady(orderId, cropName) {
       SmartKrushi.markOrderReady(orderId, cropName);
       alert('✅ Order #' + orderId + ' ko "Ready for Pickup" mark kar diya gaya hai!');
-      allOrders = SmartKrushi.getFarmerOrders(currentFarmer.farmer_id || 63);
+      allOrders = SmartKrushi.getFarmerOrders(currentFarmer);
       updateStats();
       renderOrders();
     }

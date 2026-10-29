@@ -29,13 +29,13 @@
     </div>
   </div>
 
-  <script src="../js/smart_krushi_core.js"></script>
+  <script src="../js/smart_krushi_core.js?v=20261030_09"></script>
   <script>
     if (!SmartKrushi.requireAuth('farmer')) {
       // Redirects automatically
     }
     const user = SmartKrushi.getFarmerSession() || {};
-    const orders = SmartKrushi.getFarmerOrders(user.farmer_id || 63);
+    const orders = SmartKrushi.getFarmerOrders(user);
 
     const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
     document.getElementById('historyTable').innerHTML = `

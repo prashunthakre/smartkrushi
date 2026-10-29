@@ -511,13 +511,48 @@ const SmartKrushi = {
         return newOrderId;
     },
 
-    getFarmerOrders(farmerId) {
+    getFarmerOrders(farmerIdentifier) {
         this.initMarketplace();
         const orders = JSON.parse(localStorage.getItem('sk_orders') || '[]');
-        if (!farmerId) return orders;
-        const matching = orders.filter(o => o.farmer_id == farmerId);
-        // Fall back to all orders if no orders match current farmer ID so demo never fails empty during presentation
-        return matching.length > 0 ? matching : orders;
+        if (!farmerIdentifier) return [];
+
+        let fid = null, femail = null, fname = null;
+        if (typeof farmerIdentifier === 'object' && farmerIdentifier !== null) {
+            fid = farmerIdentifier.farmer_id;
+            femail = (farmerIdentifier.email || '').toLowerCase().trim();
+            fname = (farmerIdentifier.name || '').toLowerCase().trim();
+        } else {
+            fid = farmerIdentifier;
+        }
+
+        return orders.filter(o => {
+            if (fid && String(o.farmer_id) === String(fid)) return true;
+            if (fname && o.farmer_name && o.farmer_name.toLowerCase().trim() === fname) return true;
+            if (femail && o.farmer_email && o.farmer_email.toLowerCase().trim() === femail) return true;
+            return false;
+        });
+    },
+
+    getFarmerCrops(farmerIdentifier) {
+        this.initMarketplace();
+        const allCrops = this.getCrops();
+        if (!farmerIdentifier) return [];
+
+        let fid = null, femail = null, fname = null;
+        if (typeof farmerIdentifier === 'object' && farmerIdentifier !== null) {
+            fid = farmerIdentifier.farmer_id;
+            femail = (farmerIdentifier.email || '').toLowerCase().trim();
+            fname = (farmerIdentifier.name || '').toLowerCase().trim();
+        } else {
+            fid = farmerIdentifier;
+        }
+
+        return allCrops.filter(c => {
+            if (fid && String(c.farmer_id) === String(fid)) return true;
+            if (fname && c.farmer_name && c.farmer_name.toLowerCase().trim() === fname) return true;
+            if (femail && c.farmer_email && c.farmer_email.toLowerCase().trim() === femail) return true;
+            return false;
+        });
     },
 
     getAllOrders() {

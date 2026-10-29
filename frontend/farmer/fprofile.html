@@ -499,7 +499,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="../js/smart_krushi_core.js"></script>
+<script src="../js/smart_krushi_core.js?v=20261030_09"></script>
 
 <script>
   // Strict Authentication Guard
@@ -516,53 +516,52 @@
     
     // Header
     document.getElementById('navUsername').textContent = user.name || 'Farmer';
-    document.getElementById('heroName').textContent = user.name || 'Ramesh Sharma';
-    document.getElementById('heroId').textContent = user.farmer_id || '63';
-    document.getElementById('heroLocation').textContent = (user.location || 'Haveli') + ', ' + (user.district || 'Pune') + ', ' + (user.state || 'Maharashtra');
+    document.getElementById('heroName').textContent = user.name || 'Farmer';
+    document.getElementById('heroId').textContent = user.farmer_id ? ('#SK-FARM-' + user.farmer_id) : '#SK-FARM';
+    document.getElementById('heroLocation').textContent = [user.location, user.district, user.state].filter(Boolean).join(', ') || 'Maharashtra, India';
 
     // Left Column
-    document.getElementById('sideEmail').textContent = user.email || 'farmer@smartkrushi.com';
-    document.getElementById('sidePhone').textContent = user.phone ? ('+91 ' + user.phone.replace('+91 ', '')) : '+91 9812345678';
-    document.getElementById('sideGender').textContent = user.gender || 'Male';
-    document.getElementById('sideAge').textContent = user.age || '38 Yrs';
+    document.getElementById('sideEmail').textContent = user.email || 'N/A';
+    document.getElementById('sidePhone').textContent = user.phone ? (user.phone.startsWith('+91') ? user.phone : '+91 ' + user.phone) : 'N/A';
+    document.getElementById('sideGender').textContent = user.gender || 'Not specified';
+    document.getElementById('sideAge').textContent = user.age ? (user.age + ' Yrs') : 'Not specified';
 
     // Personal Details
-    document.getElementById('detName').textContent = user.name || 'Ramesh Sharma';
-    document.getElementById('detEmail').textContent = user.email || 'farmer@smartkrushi.com';
-    document.getElementById('detPhone').textContent = user.phone || '+91 9812345678';
-    document.getElementById('detAltPhone').textContent = user.altPhone || '+91 9123456780';
-    document.getElementById('detDob').textContent = user.dob || '15 June 1986';
-    document.getElementById('detGender').textContent = user.gender || 'Male';
+    document.getElementById('detName').textContent = user.name || 'Farmer';
+    document.getElementById('detEmail').textContent = user.email || 'N/A';
+    document.getElementById('detPhone').textContent = user.phone || 'N/A';
+    document.getElementById('detAltPhone').textContent = user.altPhone || 'Not specified';
+    document.getElementById('detDob').textContent = user.dob || 'Not specified';
+    document.getElementById('detGender').textContent = user.gender || 'Not specified';
 
     // Farming Details
-    document.getElementById('detLandSize').textContent = user.landSize || '5.5 Acres (2.22 Hectares)';
-    document.getElementById('detSoilType').textContent = user.soilType || 'Black Clayey Soil (Regur)';
-    document.getElementById('detIrrigation').textContent = user.irrigation || 'Drip Irrigation + Borewell';
-    document.getElementById('detKharifCrops').textContent = user.kharifCrops || 'Soybean, Bt Cotton, Arhar/Tur';
-    document.getElementById('detRabiCrops').textContent = user.rabiCrops || 'Wheat (Sharbati), Gram (Chana)';
+    document.getElementById('detLandSize').textContent = user.landSize || 'Not specified';
+    document.getElementById('detSoilType').textContent = user.soilType || 'Not specified';
+    document.getElementById('detIrrigation').textContent = user.irrigation || 'Not specified';
+    document.getElementById('detKharifCrops').textContent = user.kharifCrops || 'None listed yet';
+    document.getElementById('detRabiCrops').textContent = user.rabiCrops || 'None listed yet';
 
     // Location
     document.getElementById('detState').textContent = user.state || 'Maharashtra';
     document.getElementById('detDistrict').textContent = user.district || 'Pune';
-    document.getElementById('detLocation').textContent = user.location || 'Haveli';
-    document.getElementById('detVillage').textContent = user.village || 'Gat No. 142, Wagholi-Khed Road';
-    document.getElementById('detPincode').textContent = user.pincode || '412207';
+    document.getElementById('detLocation').textContent = user.location || 'N/A';
+    document.getElementById('detVillage').textContent = user.village || 'N/A';
+    document.getElementById('detPincode').textContent = user.pincode || 'N/A';
 
     // Prefill modal
     document.getElementById('editName').value = user.name || '';
     document.getElementById('editPhone').value = user.phone || '';
     document.getElementById('editEmail').value = user.email || '';
-    document.getElementById('editState').value = user.state || 'Maharashtra';
-    document.getElementById('editDistrict').value = user.district || 'Pune';
-    document.getElementById('editLocation').value = user.location || 'Haveli';
-    document.getElementById('editLandSize').value = user.landSize || '5.5 Acres';
+    document.getElementById('editState').value = user.state || '';
+    document.getElementById('editDistrict').value = user.district || '';
+    document.getElementById('editLocation').value = user.location || '';
+    document.getElementById('editLandSize').value = user.landSize || '';
     if (user.soilType) document.getElementById('editSoilType').value = user.soilType;
     if (user.irrigation) document.getElementById('editIrrigation').value = user.irrigation;
 
     // Load active crop count
-    const crops = SmartKrushi.getCrops();
-    const myCrops = crops.filter(c => c.farmer_id == user.farmer_id || c.farmer_name == user.name);
-    document.getElementById('statActiveCrops').textContent = myCrops.length || 6;
+    const myCrops = SmartKrushi.getFarmerCrops(user);
+    document.getElementById('statActiveCrops').textContent = myCrops.length;
   }
 
   function saveProfile(e) {
