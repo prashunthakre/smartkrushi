@@ -825,10 +825,31 @@ SmartKrushi.auth = {
         }
 
         // Search user in registered database by exact email or 10-digit mobile number
-        const user = users.find(u => 
+        let user = users.find(u => 
             (u.email && u.email.toLowerCase() === input) || 
             (cleanDigits.length >= 10 && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits.slice(-10))
         );
+
+        // Immediate Auto-Provision for primary testing / demo accounts
+        if (!user && (input === 'kushora.otp@gmail.com' || input === 'prashun2203@gmail.com')) {
+            user = {
+                farmer_id: 60,
+                cust_id: 100,
+                name: "Prashun Thakre",
+                email: input,
+                phone: "9876543210",
+                state: "Maharashtra",
+                district: "Pune",
+                location: "Haveli",
+                address: "Flat 402, Model Colony, Pune",
+                city: "Pune",
+                pincode: "411016",
+                password: pwd || "password123"
+            };
+            users.push(user);
+            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
+            localStorage.setItem(key, JSON.stringify(users));
+        }
 
         if (!user) {
             return { 
@@ -857,10 +878,30 @@ SmartKrushi.auth = {
         const raw = (identifier || '').trim().toLowerCase();
         const cleanPhone = raw.replace(/\D/g, '');
 
-        const user = users.find(u =>
+        let user = users.find(u =>
             (u.email && u.email.toLowerCase() === raw) ||
             (cleanPhone.length >= 10 && (u.phone || '').replace(/\D/g, '').endsWith(cleanPhone.slice(-10)))
         );
+
+        if (!user && (raw === 'kushora.otp@gmail.com' || raw === 'prashun2203@gmail.com')) {
+            user = {
+                farmer_id: 60,
+                cust_id: 100,
+                name: "Prashun Thakre",
+                email: raw,
+                phone: "9876543210",
+                state: "Maharashtra",
+                district: "Pune",
+                location: "Haveli",
+                address: "Flat 402, Model Colony, Pune",
+                city: "Pune",
+                pincode: "411016",
+                password: "password123"
+            };
+            users.push(user);
+            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
+            localStorage.setItem(key, JSON.stringify(users));
+        }
 
         if (!user) {
             return {
@@ -934,10 +975,30 @@ SmartKrushi.auth = {
         const raw = (identifier || '').trim().toLowerCase();
         const cleanPhone = raw.replace(/\D/g, '');
 
-        const user = users.find(u =>
+        let user = users.find(u =>
             (u.email && u.email.toLowerCase() === raw) ||
             (cleanPhone.length >= 10 && (u.phone || '').replace(/\D/g, '').endsWith(cleanPhone.slice(-10)))
         );
+
+        if (!user && (raw === 'kushora.otp@gmail.com' || raw === 'prashun2203@gmail.com')) {
+            user = {
+                farmer_id: 60,
+                cust_id: 100,
+                name: "Prashun Thakre",
+                email: raw,
+                phone: "9876543210",
+                state: "Maharashtra",
+                district: "Pune",
+                location: "Haveli",
+                address: "Flat 402, Model Colony, Pune",
+                city: "Pune",
+                pincode: "411016",
+                password: "password123"
+            };
+            users.push(user);
+            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
+            localStorage.setItem(key, JSON.stringify(users));
+        }
 
         if (!user) {
             return {
