@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>5-Day Weather Forecast & AI Kisan Chatbot - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    body { font-family:'Poppins',sans-serif; background:#f4f7f6; }
+    .navbar-custom { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%)!important; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:0.7rem 1rem; }
+    .navbar-brand { font-weight:800; font-size:1.5rem; color:white!important; text-transform:uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color:white!important; font-weight:600; margin:0 5px; border-radius:5px; }
+    .dropdown-menu { border:none; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .card-panel { background:#fff; border-radius:18px; box-shadow:0 6px 25px rgba(0,0,0,0.07); border:none; }
+    .day-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:16px; text-align:center; transition:all 0.2s; }
+    .day-card:hover { transform:translateY(-3px); border-color:#2dce89; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
+    .chat-box { height:360px; overflow-y:auto; background:#f8faf9; border:1px solid #e2e8f0; border-radius:14px; padding:16px; }
+    .msg-bot { background:#e6fffa; border-left:4px solid #1d9c7b; padding:12px 15px; border-radius:10px; margin-bottom:12px; max-width:92%; white-space:pre-line; }
+    .msg-user { background:#1d9c7b; color:white; padding:10px 15px; border-radius:12px; margin-bottom:12px; margin-left:auto; max-width:80%; text-align:right; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-collapse collapse" id="navbar_global">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+              <a class="dropdown-item" href="fcrop_recommendation.html"><i class="fas fa-microscope text-primary"></i> Soil NPK Crop Recommendation</a>
+              <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+              <a class="dropdown-item" href="fyield_prediction.html"><i class="fas fa-chart-bar text-warning"></i> Yield Prediction</a>
+              <a class="dropdown-item" href="frainfall_prediction.html"><i class="fas fa-cloud-rain text-primary"></i> Rainfall Prediction</a>
+              <a class="dropdown-item active" href="fweather_forecast.html"><i class="fas fa-cloud-sun text-danger"></i> 5-Day Weather & AI Chatbot</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+              <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+              <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a></li>
+          <li class="nav-item">
+            <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm"><i class="fas fa-power-off"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- 5-Day Live Weather Section -->
+    <div class="card card-panel p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap border-bottom pb-3 mb-3">
+        <div>
+          <h4 class="font-weight-bold mb-1"><i class="fas fa-satellite-dish text-success mr-2"></i> Live 5-Day District Weather Telemetry (Open-Meteo API)</h4>
+          <p class="text-muted small mb-0" id="weatherSub">Real-time satellite temperature, wind speed, and precipitation forecast for sowing & spray decisions</p>
+        </div>
+        <form class="form-inline mt-2 mt-md-0" onsubmit="return loadForecast(event)">
+          <select id="wfState" class="form-control form-control-sm mr-2">
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Rajasthan">Rajasthan</option>
+          </select>
+          <input type="text" id="wfDistrict" class="form-control form-control-sm mr-2" value="Amravati" placeholder="District">
+          <button type="submit" class="btn btn-success btn-sm font-weight-bold"><i class="fas fa-sync-alt mr-1"></i> Fetch Live</button>
+        </form>
+      </div>
+
+      <div id="forecastGrid" class="row"></div>
+    </div>
+
+    <!-- AI Kisan Chatbot Section -->
+    <div class="card card-panel p-4">
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+        <div>
+          <h4 class="font-weight-bold mb-1"><i class="fas fa-robot text-primary mr-2"></i> SmartKrushi AI Kisan Sahayak (Bilingual Chatbot)</h4>
+          <p class="text-muted small mb-0">Ask anything about NPK Fertilizers, Pest Control, Mandi Rates, Wheat/Soybean cultivation, or PM-KISAN in Hindi or English</p>
+        </div>
+        <span class="badge badge-info p-2">24×7 Agri Advisor</span>
+      </div>
+
+      <div class="mb-3">
+        <span class="small text-muted mr-2">Quick Questions:</span>
+        <button class="btn btn-outline-secondary btn-sm mr-1 mb-1" onclick="quickAsk('Namaste')">👋 Hi / Namaste</button>
+        <button class="btn btn-outline-info btn-sm mr-1 mb-1" onclick="quickAsk('Today weather and rain forecast')">🌦️ Live Weather</button>
+        <button class="btn btn-outline-warning btn-sm mr-1 mb-1" onclick="quickAsk('Current Mandi price for Soybean, Cotton and Wheat')">💰 Live Mandi Rates</button>
+        <button class="btn btn-outline-success btn-sm mr-1 mb-1" onclick="quickAsk('Wheat cultivation and irrigation guide')">🌾 Wheat (गेहूं)</button>
+        <button class="btn btn-outline-success btn-sm mr-1 mb-1" onclick="quickAsk('Soybean BBF sowing and stem fly pest control')">🌱 Soybean (सोयाबीन)</button>
+        <button class="btn btn-outline-success btn-sm mr-1 mb-1" onclick="quickAsk('Cotton pink bollworm and red leaf treatment')">☁️ Cotton (कपास)</button>
+        <button class="btn btn-outline-primary btn-sm mr-1 mb-1" onclick="quickAsk('Urea & DAP Fertilizer dosage per acre')">🧪 NPK & Urea Dose</button>
+        <button class="btn btn-outline-primary btn-sm mr-1 mb-1" onclick="quickAsk('Pest and fungus control spray')">🐛 Pest & Disease Spray</button>
+        <button class="btn btn-outline-info btn-sm mb-1" onclick="quickAsk('PM Kisan and Fasal Bima Yojana subsidy')">🏛️ PM-KISAN & Bima</button>
+      </div>
+
+      <div id="chatWindow" class="chat-box mb-3">
+        <div class="msg-bot">
+          <strong><i class="fas fa-seedling text-success mr-1"></i> AI Kisan Sahayak:</strong><br>
+          Namaste Kisan Bhai! 🌾 Main aapka AI Kisan Sahayak hoon. Mujhse fasal, NPK khaad, keede/rog ki dawa, live mausam ya mandi bhav ke baare me kuch bhi puchein!
+        </div>
+      </div>
+
+      <form onsubmit="return sendChat(event)" class="input-group">
+        <input type="text" id="chatInput" class="form-control" placeholder="Type your question (e.g. 'Hi', 'Gehu me kitna Urea dale?', 'Soybean me keeda laga hai')..." required>
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-success font-weight-bold px-4"><i class="fas fa-paper-plane mr-1"></i> Ask AI</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (SmartKrushi.auth.isLoggedIn()) {
+      const user = SmartKrushi.getFarmerSession();
+      if (user && user.name) document.getElementById('navUsername').textContent = user.name;
+    }
+
+    async function loadForecast(e) {
+      if (e) e.preventDefault();
+      const state = document.getElementById('wfState').value;
+      const dist = document.getElementById('wfDistrict').value;
+      const grid = document.getElementById('forecastGrid');
+      grid.innerHTML = `<div class="col-12 text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-success"></i><p class="mt-2 small text-muted">Fetching Open-Meteo satellite weather for ${dist}...</p></div>`;
+
+      const data = await SmartKrushi.fetch5DayWeatherForecast(dist, state);
+      window.skLatestForecastData = data;
+      document.getElementById('weatherSub').innerHTML = `<strong>${data.district}, ${data.state}</strong> (${data.lat}°N, ${data.lon}°E) • ${data.zone} • Current Temp: <strong class="text-success">${data.currentTemp}°C</strong>`;
+
+      grid.innerHTML = data.days.map(d => `
+        <div class="col-md col-6 mb-3">
+          <div class="day-card h-100">
+            <div class="font-weight-bold text-dark">${d.dayName}</div>
+            <div class="small text-muted mb-2">${d.date}</div>
+            <div class="my-2"><i class="fas ${d.icon} fa-2x"></i></div>
+            <div class="font-weight-bold text-dark">${d.tempMax}°C <span class="text-muted small">/ ${d.tempMin}°C</span></div>
+            <div class="small text-primary mt-1"><i class="fas fa-tint mr-1"></i>Rain: ${d.rainMm} mm</div>
+            <div class="small text-muted"><i class="fas fa-wind mr-1"></i>Wind: ${d.windKmh} km/h</div>
+            <span class="badge badge-light border mt-2">${d.condition}</span>
+          </div>
+        </div>
+      `).join('');
+      return false;
+    }
+
+    function appendChat(userText) {
+      const box = document.getElementById('chatWindow');
+      const res = SmartKrushi.askKisanBot(userText, window.skLatestForecastData);
+      box.innerHTML += `
+        <div class="msg-user">${userText}</div>
+        <div class="msg-bot">
+          <strong><i class="fas fa-robot text-success mr-1"></i> ${res.title}</strong>
+          <div class="small text-dark mt-2"><strong>English:</strong>\n${res.reply_en}</div>
+          <div class="small text-dark mt-2 border-top pt-2"><strong>हिन्दी / Hinglish:</strong>\n${res.reply_hi}</div>
+        </div>
+      `;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendChat(e) {
+      e.preventDefault();
+      const inp = document.getElementById('chatInput');
+      const txt = inp.value.trim();
+      if (!txt) return false;
+      appendChat(txt);
+      inp.value = '';
+      return false;
+    }
+
+    function quickAsk(q) {
+      appendChat(q);
+    }
+
+    loadForecast();
+  </script>
+</body>
+</html>
+

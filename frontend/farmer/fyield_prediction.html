@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Crop Yield Prediction - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    body { font-family:'Poppins',sans-serif; background:#f4f7f6; }
+    .navbar-custom { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%)!important; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:0.7rem 1rem; }
+    .navbar-brand { font-weight:800; font-size:1.5rem; color:white!important; text-transform:uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color:white!important; font-weight:600; margin:0 5px; border-radius:5px; }
+    .dropdown-menu { border:none; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .glass-panel { background:#fff; border-radius:20px; box-shadow:0 8px 30px rgba(0,0,0,0.08); margin-top:30px; overflow:hidden; }
+    .panel-header { background:linear-gradient(87deg,#f5365c 0,#f56036 100%); padding:25px 30px; color:white; }
+    .form-control { border-radius:10px; height:45px; border:1px solid #ddd; }
+    .btn-predict { background:linear-gradient(45deg,#f5365c,#f56036); border:none; border-radius:50px; padding:12px 40px; font-size:16px; font-weight:600; color:white; width:100%; box-shadow:0 4px 15px rgba(245,54,92,0.3); }
+    .btn-predict:hover { transform:translateY(-2px); color:white; }
+    .yield-box { background:#fff9f8; border:2px solid #f56036; border-radius:16px; padding:25px; margin-top:25px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-collapse collapse" id="navbar_global">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+              <a class="dropdown-item" href="fcrop_recommendation.html"><i class="fas fa-microscope text-primary"></i> Soil NPK Crop Recommendation</a>
+              <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+              <a class="dropdown-item active" href="fyield_prediction.html"><i class="fas fa-chart-bar text-warning"></i> Yield Prediction</a>
+              <a class="dropdown-item" href="frainfall_prediction.html"><i class="fas fa-cloud-rain text-primary"></i> Rainfall Prediction</a>
+              <a class="dropdown-item" href="fweather_forecast.html"><i class="fas fa-cloud-sun text-danger"></i> 5-Day Weather & AI Chatbot</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+              <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+              <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a></li>
+          <li class="nav-item">
+            <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm"><i class="fas fa-power-off"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container pb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h3 class="font-weight-bold m-0"><i class="fas fa-chart-line mr-2"></i> AI Crop Yield & Revenue Estimator</h3>
+            <p class="m-0 mt-1 small">Predict expected harvest output (Quintals) and APMC / Direct Market Revenue based on your acreage</p>
+          </div>
+
+          <div class="card-body p-4 p-md-5">
+            <form onsubmit="return handleYield(event)">
+              <div class="row">
+                <div class="col-md-4 form-group">
+                  <label class="font-weight-bold small text-muted">State</label>
+                  <select id="yState" class="form-control" required>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Punjab">Punjab</option>
+                  </select>
+                </div>
+                <div class="col-md-4 form-group">
+                  <label class="font-weight-bold small text-muted">District</label>
+                  <input type="text" id="yDistrict" class="form-control" value="Amravati" placeholder="e.g. Amravati, Pune, Nagpur" required>
+                </div>
+                <div class="col-md-4 form-group">
+                  <label class="font-weight-bold small text-muted">Cultivation Season</label>
+                  <select id="ySeason" class="form-control" required>
+                    <option value="Kharif">Kharif (Monsoon)</option>
+                    <option value="Rabi">Rabi (Winter)</option>
+                    <option value="Summer">Summer (Zaid)</option>
+                    <option value="Whole Year">Whole Year (Annual)</option>
+                  </select>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label class="font-weight-bold small text-muted">Select Crop</label>
+                  <select id="yCrop" class="form-control" required>
+                    <option value="Soybean">Soybean (सोयाबीन)</option>
+                    <option value="Cotton">Cotton (कपास)</option>
+                    <option value="Wheat">Wheat (गेहूं)</option>
+                    <option value="Rice">Rice / Paddy (धान)</option>
+                    <option value="Tur">Arhar / Tur (तुअर)</option>
+                    <option value="Gram">Chickpea / Gram (चना)</option>
+                    <option value="Maize">Maize (मक्का)</option>
+                    <option value="Sugarcane">Sugarcane (गन्ना)</option>
+                    <option value="Onion">Onion (प्याज)</option>
+                    <option value="Potato">Potato (आलू)</option>
+                    <option value="Bajra">Bajra (बाजरा)</option>
+                  </select>
+                </div>
+                <div class="col-md-6 form-group">
+                  <label class="font-weight-bold small text-muted">Farm Land Area (in Acres)</label>
+                  <input type="number" step="0.5" min="0.5" max="500" id="yArea" class="form-control" value="4.0" required>
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col-md-6 mx-auto">
+                  <button type="submit" class="btn btn-predict"><i class="fas fa-calculator mr-2"></i> CALCULATE PREDICTED YIELD</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="yieldResult"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (SmartKrushi.auth.isLoggedIn()) {
+      const user = SmartKrushi.getFarmerSession();
+      if (user && user.name) document.getElementById('navUsername').textContent = user.name;
+    }
+
+    function handleYield(e) {
+      e.preventDefault();
+      const state = document.getElementById('yState').value;
+      const dist = document.getElementById('yDistrict').value;
+      const season = document.getElementById('ySeason').value;
+      const crop = document.getElementById('yCrop').value;
+      const area = document.getElementById('yArea').value;
+
+      const res = SmartKrushi.predictYield(state, dist, season, crop, area);
+      const resBox = document.getElementById('yieldResult');
+      resBox.innerHTML = `
+        <div class="yield-box" style="animation:fadeIn 0.4s ease;">
+          <div class="d-flex justify-content-between align-items-center flex-wrap border-bottom pb-3 mb-3">
+            <div>
+              <span class="badge badge-danger px-3 py-1 mb-1">AI REGRESSION MODEL • ${res.confidence} ACCURACY</span>
+              <h4 class="font-weight-bold text-dark mb-0">${res.crop} — ${res.areaAcres} Acres (${res.district}, ${res.state})</h4>
+            </div>
+            <div class="text-right mt-2 mt-md-0">
+              <span class="badge badge-success p-2">Live APMC Mandi Rate: ₹${res.mspPerQuintal.toLocaleString('en-IN')} / Quintal</span>
+            </div>
+          </div>
+
+          <div class="row text-center mb-3">
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border shadow-sm">
+                <div class="small text-muted text-uppercase">Predicted Yield / Acre</div>
+                <h3 class="font-weight-bold text-primary mb-0">${res.yieldPerAcre} Qtl</h3>
+                <small class="text-muted">Per Acre Harvest Rate</small>
+              </div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border shadow-sm">
+                <div class="small text-muted text-uppercase">Total Harvest Output</div>
+                <h3 class="font-weight-bold text-success mb-0">${res.totalQuintals} Qtl</h3>
+                <small class="text-muted">(${res.totalKg.toLocaleString('en-IN')} kg Total Harvest)</small>
+              </div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border shadow-sm">
+                <div class="small text-muted text-uppercase">Estimated Mandi Revenue</div>
+                <h3 class="font-weight-bold text-danger mb-0">₹${res.estimatedRevenue.toLocaleString('en-IN')}</h3>
+                <small class="text-muted">0% Brokerage on SmartKrushi</small>
+              </div>
+            </div>
+          </div>
+
+          <p class="mb-1 text-dark small"><strong><i class="fas fa-lightbulb text-warning mr-1"></i> Agronomic Tip:</strong> ${res.advice_en}</p>
+          <p class="mb-0 text-dark small"><strong><i class="fas fa-language text-success mr-1"></i> किसान सलाह:</strong> ${res.advice_hi}</p>
+        </div>
+      `;
+      resBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return false;
+    }
+  </script>
+</body>
+</html>
+

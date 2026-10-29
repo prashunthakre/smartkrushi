@@ -1,0 +1,539 @@
+/* ==========================================================================
+   SmartKrushi Modern Light Glassmorphic Design System (Fresh AgTech + Animations)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-emerald: #059669;
+  --primary-light-emerald: #10b981;
+  --primary-deep: #064e3b;
+  --accent-gold: #d97706;
+  --accent-blue: #2563eb;
+  --bg-light: #f4fbf7;
+  --bg-white: #ffffff;
+  --glass-bg-white: rgba(255, 255, 255, 0.88);
+  --glass-card: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(16, 185, 129, 0.18);
+  --glass-border-hover: rgba(16, 185, 129, 0.45);
+  --glass-blur: blur(14px);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --shadow-soft: 0 10px 30px rgba(5, 150, 105, 0.08);
+  --shadow-hover: 0 20px 40px rgba(5, 150, 105, 0.15);
+  --glow-emerald: 0 0 20px rgba(5, 150, 105, 0.25);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   Animations Suite (Keyframes)
+   -------------------------------------------------------------------------- */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatAnim {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(5, 150, 105, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(5, 150, 105, 0.45);
+  }
+}
+
+@keyframes shimmerGlow {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation Classes */
+.animate-fade-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-1 { animation-delay: 0.15s; }
+.delay-2 { animation-delay: 0.3s; }
+.delay-3 { animation-delay: 0.45s; }
+.delay-4 { animation-delay: 0.6s; }
+
+.animate-float {
+  animation: floatAnim 4s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   Top APMC Live Rates Marquee Ticker
+   -------------------------------------------------------------------------- */
+.sk-ticker-wrap {
+  width: 100%;
+  background: linear-gradient(90deg, #064e3b 0%, #059669 50%, #10b981 100%);
+  color: #ffffff;
+  padding: 8px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 1040;
+}
+
+.sk-ticker {
+  display: flex;
+  white-space: nowrap;
+  animation: tickerSlide 35s linear infinite;
+}
+
+.sk-ticker:hover {
+  animation-play-state: paused;
+}
+
+.sk-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 40px;
+  gap: 8px;
+}
+
+.sk-ticker-badge {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  animation: pulseGlow 2.5s infinite;
+}
+
+@keyframes tickerSlide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* --------------------------------------------------------------------------
+   Light Glassmorphic Floating Navbar
+   -------------------------------------------------------------------------- */
+.sk-navbar {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 0;
+  transition: all 0.3s ease;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.sk-navbar-brand {
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--primary-deep) !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none !important;
+  transition: transform 0.3s ease;
+}
+
+.sk-navbar-brand:hover {
+  transform: scale(1.03);
+}
+
+.sk-navbar-brand i {
+  color: var(--primary-emerald);
+  transition: transform 0.4s ease;
+}
+
+.sk-navbar-brand:hover i {
+  transform: rotate(20deg) scale(1.15);
+}
+
+.sk-nav-link {
+  color: var(--text-main) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 8px 16px !important;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.sk-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 16px; right: 16px;
+  height: 2px;
+  background: var(--primary-emerald);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.sk-nav-link:hover::after, .sk-nav-link.active::after {
+  transform: scaleX(1);
+}
+
+.sk-nav-link:hover, .sk-nav-link.active {
+  color: var(--primary-emerald) !important;
+  background: rgba(5, 150, 105, 0.08);
+}
+
+.sk-btn-account {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25);
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none !important;
+}
+
+.sk-btn-account:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--glow-emerald);
+}
+
+/* --------------------------------------------------------------------------
+   Light Fresh Hero Section
+   -------------------------------------------------------------------------- */
+.sk-hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  padding: 90px 0 70px 0;
+  background: linear-gradient(180deg, rgba(230, 244, 237, 0.85) 0%, rgba(244, 251, 247, 0.98) 100%),
+              url('../img/agri.png') no-repeat center center/cover;
+  overflow: hidden;
+}
+
+.sk-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.sk-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 30px;
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  color: var(--primary-emerald);
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+}
+
+.sk-badge-pill:hover {
+  background: rgba(5, 150, 105, 0.18);
+  transform: translateY(-2px);
+}
+
+.sk-hero-title {
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1.18;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+  color: var(--text-main);
+}
+
+.sk-gradient-text {
+  background: linear-gradient(135deg, #064e3b 0%, #059669 60%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sk-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  max-width: 650px;
+  margin-bottom: 36px;
+  font-weight: 500;
+}
+
+/* Light Action Buttons with Hover Animation */
+.sk-btn-primary {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.25);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none !important;
+}
+
+.sk-btn-primary:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 14px 30px rgba(5, 150, 105, 0.4);
+}
+
+.sk-btn-glass {
+  background: #ffffff;
+  color: var(--text-main) !important;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none !important;
+}
+
+.sk-btn-glass:hover {
+  background: #f8fafc;
+  border-color: var(--primary-emerald);
+  color: var(--primary-emerald) !important;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   Light Glassmorphic Cards & Grid System
+   -------------------------------------------------------------------------- */
+.sk-glass-card {
+  background: var(--glass-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 32px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  height: 100%;
+}
+
+.sk-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--primary-emerald), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.sk-glass-card:hover {
+  transform: translateY(-10px) scale(1.015);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--shadow-hover);
+}
+
+.sk-glass-card:hover::before {
+  opacity: 1;
+}
+
+.sk-icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--primary-emerald);
+  margin-bottom: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sk-glass-card:hover .sk-icon-box {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  transform: scale(1.12) rotate(6deg);
+  box-shadow: var(--glow-emerald);
+}
+
+.sk-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-main);
+  transition: color 0.3s ease;
+}
+
+.sk-glass-card:hover .sk-card-title {
+  color: var(--primary-emerald);
+}
+
+.sk-card-text {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Contact Inputs Animation
+   -------------------------------------------------------------------------- */
+.form-control-custom {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control-custom:focus {
+  border-color: var(--primary-emerald) !important;
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Section Titles & Dividers
+   -------------------------------------------------------------------------- */
+.sk-section {
+  padding: 85px 0;
+  position: relative;
+}
+
+.sk-section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--text-main);
+}
+
+.sk-section-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto 50px auto;
+}
+
+/* --------------------------------------------------------------------------
+   AI Quote Widget (Daily Inspiration)
+   -------------------------------------------------------------------------- */
+.sk-quote-box {
+  background: #ffffff;
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  border-radius: 20px;
+  padding: 28px 34px;
+  margin: 30px 0;
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  transition: all 0.35s ease;
+}
+
+.sk-quote-box:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(5, 150, 105, 0.4);
+}
+
+.sk-quote-text {
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.sk-quote-author {
+  font-weight: 700;
+  color: var(--primary-emerald);
+  margin-top: 8px;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Light Footer
+   -------------------------------------------------------------------------- */
+.sk-footer {
+  background: #ffffff;
+  border-top: 1px solid var(--glass-border);
+  padding: 30px 0 30px 0 !important;
+  color: var(--text-muted);
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.02);
+  position: relative !important;
+  margin-top: 80px !important;
+  clear: both !important;
+}
+
+
+
+.sk-footer h5 {
+  color: var(--text-main);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.sk-footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.sk-footer-links li {
+  margin-bottom: 10px;
+}
+
+.sk-footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.sk-footer-links a:hover {
+  color: var(--primary-emerald);
+  transform: translateX(4px);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+  .sk-hero-title {
+    font-size: 2.6rem;
+  }
+  .sk-hero-subtitle {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .sk-hero-title {
+    font-size: 2.1rem;
+  }
+  .sk-btn-primary, .sk-btn-glass {
+    width: 100%;
+    justify-content: center;
+  }
+}

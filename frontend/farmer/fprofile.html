@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Farmer Profile - SmartKrushi</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7f6;
+      color: #333;
+    }
+    .navbar-custom {
+      background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 0.7rem 1rem;
+    }
+    .navbar-brand { font-weight: 800; font-size: 1.5rem; color: white !important; text-transform: uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color: white !important; font-weight: 600; margin: 0 5px; border-radius: 5px; }
+    .navbar-dark .navbar-nav .nav-link:hover { background: rgba(255,255,255,0.2); }
+    .dropdown-menu { border: none; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    
+    .profile-hero {
+      background: linear-gradient(135deg, #134e4a 0%, #059669 100%), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;
+      color: white;
+      padding: 45px 0 55px;
+      position: relative;
+    }
+    .profile-avatar-wrap {
+      position: relative;
+      width: 125px;
+      height: 125px;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .verified-badge {
+      background: #10b981;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .profile-card {
+      background: white;
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .profile-card-header {
+      background: #fcfdfd;
+      border-bottom: 1px solid #edf2f7;
+      padding: 18px 24px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .profile-card-body {
+      padding: 24px;
+    }
+    .info-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #1a202c;
+      word-break: break-word;
+    }
+    .stat-pill {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-pill .num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #059669;
+    }
+    .stat-pill .lbl {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+    .btn-edit-profile {
+      background: white;
+      color: #059669;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 10px 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .btn-edit-profile:hover {
+      background: #ecfdf5;
+      color: #047857;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navbar_global">
+      <ul class="navbar-nav ml-auto align-items-center">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+            <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+            <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+            <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+          </div>
+        </li>
+        <li class="nav-item active">
+          <a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm">
+            <i class="fas fa-power-off"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO HEADER -->
+<div class="profile-hero">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-left">
+        <div class="profile-avatar-wrap mb-3 mb-md-0 mr-md-4">
+          <img id="profileImg" src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="Farmer Avatar">
+        </div>
+        <div>
+          <div class="mb-2">
+            <span class="verified-badge"><i class="fas fa-check-circle"></i> Verified Agri Producer</span>
+            <span class="badge badge-light text-success font-weight-bold ml-2 py-1 px-2"><i class="fas fa-id-card"></i> ID: #<span id="heroId">63</span></span>
+          </div>
+          <h2 class="font-weight-bold text-white mb-1" id="heroName">Ramesh Sharma</h2>
+          <p class="text-white-50 mb-0">
+            <i class="fas fa-map-marker-alt text-warning mr-1"></i> <span id="heroLocation">Haveli, Pune, Maharashtra</span>
+            <span class="mx-2">•</span>
+            <i class="fas fa-calendar-check text-info mr-1"></i> Member Since 2023
+          </p>
+        </div>
+      </div>
+      <div class="mt-4 mt-md-0">
+        <button class="btn-edit-profile" data-toggle="modal" data-target="#editProfileModal">
+          <i class="fas fa-user-edit mr-2"></i> Edit Profile
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN DETAILS CONTAINER -->
+<div class="container my-4">
+  <div class="row">
+
+    <!-- LEFT COLUMN: QUICK SUMMARY & CREDENTIALS -->
+    <div class="col-lg-4">
+      
+      <!-- Key Farming Stats -->
+      <div class="profile-card p-3">
+        <div class="row text-center">
+          <div class="col-4">
+            <div class="stat-pill">
+              <div class="num" id="statActiveCrops">6</div>
+              <div class="lbl">Crops</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-pill">
+              <div class="num" id="statOrders">12</div>
+              <div class="lbl">Orders</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-pill">
+              <div class="num">4.9★</div>
+              <div class="lbl">Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Contact Info -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <span><i class="fas fa-address-book mr-2"></i> Contact Card</span>
+        </div>
+        <div class="profile-card-body">
+          <div class="mb-3">
+            <div class="info-label">Email Address</div>
+            <div class="info-value text-primary" id="sideEmail">ramesh.kisan@gmail.com</div>
+          </div>
+          <div class="mb-3">
+            <div class="info-label">Mobile Number</div>
+            <div class="info-value" id="sidePhone">+91 9812345678</div>
+          </div>
+          <div class="mb-3">
+            <div class="info-label">Gender & Age</div>
+            <div class="info-value"><span id="sideGender">Male</span> • <span id="sideAge">38 Yrs</span></div>
+          </div>
+          <div class="mb-3">
+            <div class="info-label">Language Preference</div>
+            <div class="info-value">Marathi / Hindi / English</div>
+          </div>
+          <div>
+            <div class="info-label">Govt. Verification</div>
+            <div class="info-value text-success"><i class="fas fa-shield-alt text-success mr-1"></i> Aadhaar & PM-Kisan Linked</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Government Scheme & Subsidies Linked -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <span><i class="fas fa-university mr-2"></i> Agri Scheme Linkages</span>
+        </div>
+        <div class="profile-card-body">
+          <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded bg-light">
+            <div>
+              <small class="font-weight-bold d-block">PM-KISAN Samman Nidhi</small>
+              <small class="text-muted">Aadhaar Authenticated</small>
+            </div>
+            <span class="badge badge-success">ACTIVE</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between p-2 mb-2 rounded bg-light">
+            <div>
+              <small class="font-weight-bold d-block">Soil Health Card (SHC)</small>
+              <small class="text-muted">ID: SHC-MH-8842</small>
+            </div>
+            <span class="badge badge-info">VERIFIED</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light">
+            <div>
+              <small class="font-weight-bold d-block">Kisan Credit Card (KCC)</small>
+              <small class="text-muted">SBI Agri Branch</small>
+            </div>
+            <span class="badge badge-success">LINKED</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: DETAILED SECTIONS -->
+    <div class="col-lg-8">
+
+      <!-- Section 1: Personal & Account Details -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <span><i class="fas fa-user-circle text-success mr-2"></i> Personal & Identification Information</span>
+          <small class="text-muted">Official Records</small>
+        </div>
+        <div class="profile-card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Full Name</div>
+              <div class="info-value" id="detName">Ramesh Sharma</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Registered Email</div>
+              <div class="info-value" id="detEmail">ramesh.kisan@gmail.com</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Mobile Number</div>
+              <div class="info-value" id="detPhone">+91 9812345678</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Alternate Mobile / WhatsApp</div>
+              <div class="info-value" id="detAltPhone">+91 9123456780</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Date of Birth</div>
+              <div class="info-value" id="detDob">15 June 1986</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Gender</div>
+              <div class="info-value" id="detGender">Male</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Agriculture & Farm Land Details -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <span><i class="fas fa-tractor text-success mr-2"></i> Landholding & Agricultural Profile</span>
+          <small class="text-muted">Field Data</small>
+        </div>
+        <div class="profile-card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Total Land Holding</div>
+              <div class="info-value" id="detLandSize">5.5 Acres (2.22 Hectares)</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Soil Type</div>
+              <div class="info-value" id="detSoilType">Black Clayey Soil (Regur)</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Major Kharif Crops</div>
+              <div class="info-value" id="detKharifCrops">Soybean, Bt Cotton, Arhar/Tur</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Major Rabi Crops</div>
+              <div class="info-value" id="detRabiCrops">Wheat (Sharbati), Gram (Chana)</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Irrigation Facility</div>
+              <div class="info-value" id="detIrrigation">Drip Irrigation + Borewell (Perennial)</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Farming Practice</div>
+              <div class="info-value"><span class="badge badge-pill badge-success px-2 py-1">Semi-Organic & IPM Certified</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Geographic Location & Farm Address -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <span><i class="fas fa-map-marked-alt text-success mr-2"></i> Farm Location & Permanent Address</span>
+        </div>
+        <div class="profile-card-body">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="info-label">State</div>
+              <div class="info-value" id="detState">Maharashtra</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="info-label">District</div>
+              <div class="info-value" id="detDistrict">Pune</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="info-label">Taluka / Tehsil</div>
+              <div class="info-value" id="detLocation">Haveli</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Village / Farm Address</div>
+              <div class="info-value" id="detVillage">Gat No. 142, Wagholi-Khed Road</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <div class="info-label">Postal Pincode</div>
+              <div class="info-value" id="detPincode">412207</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title font-weight-bold text-white"><i class="fas fa-user-edit mr-2"></i> Edit Farmer Profile</h5>
+        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body p-4">
+        <form id="editProfileForm" onsubmit="return saveProfile(event)">
+          
+          <h6 class="text-success font-weight-bold mb-3 border-bottom pb-2"><i class="fas fa-user mr-1"></i> Personal Details</h6>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="small font-weight-bold">Full Name</label>
+              <input type="text" id="editName" class="form-control" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="small font-weight-bold">Mobile Number</label>
+              <input type="tel" id="editPhone" class="form-control" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="small font-weight-bold">Email Address</label>
+              <input type="email" id="editEmail" class="form-control" readonly style="background:#f8f9fa;">
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="small font-weight-bold">Date of Birth</label>
+              <input type="date" id="editDob" class="form-control" value="1986-06-15">
+            </div>
+          </div>
+
+          <h6 class="text-success font-weight-bold mt-3 mb-3 border-bottom pb-2"><i class="fas fa-tractor mr-1"></i> Agriculture & Farm Land Info</h6>
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">Total Land (Acres)</label>
+              <input type="text" id="editLandSize" class="form-control" value="5.5 Acres">
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">Soil Type</label>
+              <select id="editSoilType" class="form-control">
+                <option value="Black Clayey Soil (Regur)">Black Clayey Soil (Regur)</option>
+                <option value="Alluvial Loamy Soil">Alluvial Loamy Soil</option>
+                <option value="Red & Laterite Soil">Red & Laterite Soil</option>
+                <option value="Sandy Loam">Sandy Loam</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">Irrigation Source</label>
+              <select id="editIrrigation" class="form-control">
+                <option value="Drip Irrigation + Borewell">Drip Irrigation + Borewell</option>
+                <option value="Canal Irrigation">Canal Irrigation</option>
+                <option value="Sprinkler Irrigation">Sprinkler Irrigation</option>
+                <option value="Rainfed Only">Rainfed Only</option>
+              </select>
+            </div>
+          </div>
+
+          <h6 class="text-success font-weight-bold mt-3 mb-3 border-bottom pb-2"><i class="fas fa-map-marker-alt mr-1"></i> Location Details</h6>
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">State</label>
+              <input type="text" id="editState" class="form-control" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">District</label>
+              <input type="text" id="editDistrict" class="form-control" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="small font-weight-bold">Taluka / Village</label>
+              <input type="text" id="editLocation" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="text-right mt-3">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success px-4 font-weight-bold"><i class="fas fa-save mr-1"></i> Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="py-4 mt-5 bg-dark text-white text-center">
+  <div class="container">
+    <small>© 2024 SmartKrushi Agriculture Portal. Empowering Farmers with AI & Direct Trade.</small>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="../js/smart_krushi_core.js"></script>
+
+<script>
+  // Strict Authentication Guard
+  if (!SmartKrushi.requireAuth('farmer')) {
+    // Redirects to flogin.html automatically
+  }
+
+  function loadProfile() {
+    const user = SmartKrushi.getFarmerSession();
+    if (!user) {
+      SmartKrushi.logout('farmer');
+      return;
+    }
+    
+    // Header
+    document.getElementById('navUsername').textContent = user.name || 'Farmer';
+    document.getElementById('heroName').textContent = user.name || 'Ramesh Sharma';
+    document.getElementById('heroId').textContent = user.farmer_id || '63';
+    document.getElementById('heroLocation').textContent = (user.location || 'Haveli') + ', ' + (user.district || 'Pune') + ', ' + (user.state || 'Maharashtra');
+
+    // Left Column
+    document.getElementById('sideEmail').textContent = user.email || 'farmer@smartkrushi.com';
+    document.getElementById('sidePhone').textContent = user.phone ? ('+91 ' + user.phone.replace('+91 ', '')) : '+91 9812345678';
+    document.getElementById('sideGender').textContent = user.gender || 'Male';
+    document.getElementById('sideAge').textContent = user.age || '38 Yrs';
+
+    // Personal Details
+    document.getElementById('detName').textContent = user.name || 'Ramesh Sharma';
+    document.getElementById('detEmail').textContent = user.email || 'farmer@smartkrushi.com';
+    document.getElementById('detPhone').textContent = user.phone || '+91 9812345678';
+    document.getElementById('detAltPhone').textContent = user.altPhone || '+91 9123456780';
+    document.getElementById('detDob').textContent = user.dob || '15 June 1986';
+    document.getElementById('detGender').textContent = user.gender || 'Male';
+
+    // Farming Details
+    document.getElementById('detLandSize').textContent = user.landSize || '5.5 Acres (2.22 Hectares)';
+    document.getElementById('detSoilType').textContent = user.soilType || 'Black Clayey Soil (Regur)';
+    document.getElementById('detIrrigation').textContent = user.irrigation || 'Drip Irrigation + Borewell';
+    document.getElementById('detKharifCrops').textContent = user.kharifCrops || 'Soybean, Bt Cotton, Arhar/Tur';
+    document.getElementById('detRabiCrops').textContent = user.rabiCrops || 'Wheat (Sharbati), Gram (Chana)';
+
+    // Location
+    document.getElementById('detState').textContent = user.state || 'Maharashtra';
+    document.getElementById('detDistrict').textContent = user.district || 'Pune';
+    document.getElementById('detLocation').textContent = user.location || 'Haveli';
+    document.getElementById('detVillage').textContent = user.village || 'Gat No. 142, Wagholi-Khed Road';
+    document.getElementById('detPincode').textContent = user.pincode || '412207';
+
+    // Prefill modal
+    document.getElementById('editName').value = user.name || '';
+    document.getElementById('editPhone').value = user.phone || '';
+    document.getElementById('editEmail').value = user.email || '';
+    document.getElementById('editState').value = user.state || 'Maharashtra';
+    document.getElementById('editDistrict').value = user.district || 'Pune';
+    document.getElementById('editLocation').value = user.location || 'Haveli';
+    document.getElementById('editLandSize').value = user.landSize || '5.5 Acres';
+    if (user.soilType) document.getElementById('editSoilType').value = user.soilType;
+    if (user.irrigation) document.getElementById('editIrrigation').value = user.irrigation;
+
+    // Load active crop count
+    const crops = SmartKrushi.getCrops();
+    const myCrops = crops.filter(c => c.farmer_id == user.farmer_id || c.farmer_name == user.name);
+    document.getElementById('statActiveCrops').textContent = myCrops.length || 6;
+  }
+
+  function saveProfile(e) {
+    e.preventDefault();
+    let user = SmartKrushi.getFarmerSession();
+    
+    user.name = document.getElementById('editName').value.trim();
+    user.phone = document.getElementById('editPhone').value.trim();
+    user.state = document.getElementById('editState').value.trim();
+    user.district = document.getElementById('editDistrict').value.trim();
+    user.location = document.getElementById('editLocation').value.trim();
+    user.landSize = document.getElementById('editLandSize').value.trim();
+    user.soilType = document.getElementById('editSoilType').value;
+    user.irrigation = document.getElementById('editIrrigation').value;
+
+    // Save to farmer session
+    SmartKrushi.setFarmerSession(user);
+
+    // Update registered farmers database
+    let farmers = SmartKrushi.getRegisteredUsers('farmer');
+    farmers = farmers.map(f => {
+      if (f.email.toLowerCase() === user.email.toLowerCase() || f.farmer_id == user.farmer_id) {
+        return { ...f, ...user };
+      }
+      return f;
+    });
+    localStorage.setItem('sk_registered_farmers', JSON.stringify(farmers));
+
+    // Update logged in user name
+    let loggedIn = SmartKrushi.auth.getCurrentUser();
+    if (loggedIn && loggedIn.type === 'farmer') {
+      loggedIn.name = user.name;
+      localStorage.setItem('sk_logged_in', JSON.stringify(loggedIn));
+    }
+
+    $('#editProfileModal').modal('hide');
+    alert('Profile updated successfully!');
+    loadProfile();
+    return false;
+  }
+
+  // Load on start
+  loadProfile();
+</script>
+</body>
+</html>

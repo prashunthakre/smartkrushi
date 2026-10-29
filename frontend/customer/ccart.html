@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Shopping Cart - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body { background: #f3f7f4; font-family: 'Open Sans', Arial, sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1a7f5a, #1969b3); color: white; }
+    .summary-box { background: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+    .cart-card { background: #fff; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eef2ef; }
+    .btn-qty { width: 30px; height: 30px; padding: 0; line-height: 28px; border-radius: 50%; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav class="topbar py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div><strong><i class="fas fa-shopping-cart mr-2"></i> SmartKrushi Cart</strong></div>
+      <div class="d-flex align-items-center">
+        <a href="cbuy_crops.html" class="text-white mr-3"><i class="fas fa-store mr-1"></i> Market</a>
+        <a href="corder_history.html" class="text-white mr-3"><i class="fas fa-history mr-1"></i> Orders</a>
+        <a href="cprofile.html" class="text-white mr-3"><i class="fas fa-user-circle mr-1"></i> Profile</a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="fas fa-power-off mr-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="font-weight-bold mb-1"><i class="fas fa-shopping-basket text-success mr-2"></i> Review Your Cart</h3>
+        <p class="text-muted small mb-0">Check selected farm crops and fill delivery details for the farmer</p>
+      </div>
+      <div>
+        <a href="cbuy_crops.html" class="btn btn-outline-success btn-sm"><i class="fas fa-arrow-left mr-1"></i> Continue Shopping</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Left Column: Cart Items -->
+      <div class="col-lg-7 mb-4">
+        <div id="cartItems"></div>
+      </div>
+
+      <!-- Right Column: Customer Information & Checkout -->
+      <div class="col-lg-5">
+        <div class="summary-box">
+          <h5 class="font-weight-bold mb-1 d-flex align-items-center">
+            <i class="fas fa-truck text-success mr-2"></i>
+            <span>Customer Delivery Details</span>
+          </h5>
+          <p class="text-muted small mb-3">
+            Ye information kisan ko aapka order deliver karne ke liye dikhayi jayegi.
+          </p>
+
+          <div id="checkoutAlert" class="alert alert-danger d-none py-2 px-3 small"></div>
+
+          <!-- Customer Input Fields -->
+          <div class="form-group mb-2">
+            <label class="small font-weight-bold mb-1">Full Name (ग्राहक का नाम) <span class="text-danger">*</span></label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-user text-success"></i></span></div>
+              <input type="text" id="custName" class="form-control" placeholder="Apna poora naam enter karein" required />
+            </div>
+          </div>
+
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <label class="small font-weight-bold mb-1">Mobile Number (मोबाइल) <span class="text-danger">*</span></label>
+              <div class="input-group input-group-sm">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-phone text-success"></i></span></div>
+                <input type="tel" id="custPhone" class="form-control" placeholder="10-digit mobile" maxlength="12" required />
+              </div>
+            </div>
+            <div class="col-6">
+              <label class="small font-weight-bold mb-1">Email (ईमेल अलर्ट) <span class="text-danger">*</span></label>
+              <div class="input-group input-group-sm">
+                <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope text-success"></i></span></div>
+                <input type="email" id="custEmail" class="form-control" placeholder="Email for receipt" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="small font-weight-bold mb-1">Delivery Address (घर / फ्लैट / गली का पता) <span class="text-danger">*</span></label>
+            <textarea id="custAddress" class="form-control form-control-sm" rows="2" placeholder="House/Flat No, Apartment, Street / Colony" required></textarea>
+          </div>
+
+          <div class="form-row mb-2">
+            <div class="col-7">
+              <label class="small font-weight-bold mb-1">City / District (शहर) <span class="text-danger">*</span></label>
+              <input type="text" id="custCity" class="form-control form-control-sm" placeholder="City" required />
+            </div>
+            <div class="col-5">
+              <label class="small font-weight-bold mb-1">Pincode <span class="text-danger">*</span></label>
+              <input type="text" id="custPincode" class="form-control form-control-sm" placeholder="411001" maxlength="6" required />
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="small font-weight-bold mb-1">Landmark / Farmer Instruction (पहचान चिन्ह / निर्देश)</label>
+            <input type="text" id="custLandmark" class="form-control form-control-sm" placeholder="e.g. Near Temple / School, Call before coming" />
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="small font-weight-bold mb-1">Payment Method (भुगतान विकल्प)</label>
+            <div class="custom-control custom-radio p-2 border rounded mb-1 bg-light">
+              <input type="radio" id="payOnline" name="paymentMethod" class="custom-control-input" value="Online Payment (UPI QR / Card)" checked />
+              <label class="custom-control-label small font-weight-bold text-primary" for="payOnline">
+                💳 Online Payment Gateway (UPI QR / Card / NetBanking) <span class="badge badge-success ml-1">Instant Receipt</span>
+              </label>
+            </div>
+            <div class="custom-control custom-radio p-2 border rounded mb-1">
+              <input type="radio" id="payUPI" name="paymentMethod" class="custom-control-input" value="UPI on Delivery (GPay / PhonePe)" />
+              <label class="custom-control-label small font-weight-bold" for="payUPI">📱 UPI on Delivery (GPay / PhonePe / Paytm)</label>
+            </div>
+            <div class="custom-control custom-radio p-2 border rounded">
+              <input type="radio" id="payCOD" name="paymentMethod" class="custom-control-input" value="Cash on Delivery (COD)" />
+              <label class="custom-control-label small font-weight-bold" for="payCOD">💵 Cash on Delivery (COD)</label>
+            </div>
+          </div>
+
+          <!-- Price Summary -->
+          <div class="border-top pt-3">
+            <div class="d-flex justify-content-between py-1 text-muted small"><span>Total Crops / Types</span><strong id="itemCount">0</strong></div>
+            <div class="d-flex justify-content-between py-1 text-muted small"><span>Subtotal</span><strong id="subTotal">₹0</strong></div>
+            <div class="d-flex justify-content-between py-1 text-muted small"><span>Farm Delivery</span><strong class="text-success font-weight-bold">FREE</strong></div>
+            <div class="d-flex justify-content-between py-2 border-top mt-2">
+              <span class="h6 font-weight-bold mb-0">Total Amount:</span>
+              <strong class="h5 text-success font-weight-bold mb-0" id="grandTotal">₹0</strong>
+            </div>
+          </div>
+
+          <button class="btn btn-success btn-block mt-3 py-2 font-weight-bold shadow" onclick="placeOrder()">
+            <i class="fas fa-lock mr-1"></i> Proceed to Pay & Place Order
+          </button>
+          <div class="text-center mt-2 small text-muted">
+            <i class="fas fa-envelope-open-text text-success mr-1"></i> Instant Email Receipt & Farmer Alert Enabled
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Online Payment Gateway Modal (Razorpay / BHIM UPI Simulator) -->
+  <div id="paymentGatewayModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.72);z-index:9998;align-items:center;justify-content:center;padding:15px;">
+    <div class="bg-white rounded shadow-lg overflow-hidden" style="max-width:430px;width:100%;border-radius:18px !important;">
+      <div class="p-3 text-white d-flex justify-content-between align-items-center" style="background:linear-gradient(90deg,#0f172a,#1e3a8a);">
+        <div>
+          <div class="font-weight-bold"><i class="fas fa-shield-alt text-warning mr-1"></i> SmartKrushi PaySecure</div>
+          <small class="text-light">100% Direct Farmer Escrow Gateway</small>
+        </div>
+        <div class="text-right">
+          <div class="h5 font-weight-bold mb-0 text-warning" id="pgAmountText">₹0</div>
+          <small class="text-light">Zero Commission</small>
+        </div>
+      </div>
+      <div class="p-4">
+        <ul class="nav nav-pills nav-fill mb-3 small">
+          <li class="nav-item">
+            <a class="nav-link active font-weight-bold" id="tabUpiBtn" href="javascript:void(0)" onclick="switchPgTab('upi')"><i class="fas fa-qrcode mr-1"></i> UPI QR / VPA</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link font-weight-bold" id="tabCardBtn" href="javascript:void(0)" onclick="switchPgTab('card')"><i class="fas fa-credit-card mr-1"></i> Debit / Credit Card</a>
+          </li>
+        </ul>
+
+        <!-- UPI Section -->
+        <div id="pgUpiSection" class="text-center">
+          <div class="border rounded p-3 mb-3 bg-light">
+            <img id="pgQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=smartkrushi@icici&pn=SmartKrushi%20Portal" alt="UPI QR" style="width:145px;height:145px;border-radius:8px;border:3px solid #fff;" />
+            <div class="small font-weight-bold text-dark mt-2">Scan with GPay, PhonePe, Paytm or BHIM</div>
+            <div class="badge badge-success mt-1">Merchant: smartkrushi@upi</div>
+          </div>
+          <div class="form-group text-left mb-2">
+            <label class="small font-weight-bold mb-1">Or Enter UPI ID (VPA)</label>
+            <input type="text" id="pgUpiId" class="form-control form-control-sm" value="buyer@okaxis" placeholder="yourname@upi" />
+          </div>
+        </div>
+
+        <!-- Card Section -->
+        <div id="pgCardSection" style="display:none;">
+          <div class="form-group mb-2">
+            <label class="small font-weight-bold mb-1">Card Number</label>
+            <input type="text" class="form-control form-control-sm" value="4532 •••• •••• 8891" />
+          </div>
+          <div class="form-row mb-2">
+            <div class="col-6">
+              <label class="small font-weight-bold mb-1">Expiry</label>
+              <input type="text" class="form-control form-control-sm" value="08/29" />
+            </div>
+            <div class="col-6">
+              <label class="small font-weight-bold mb-1">CVV</label>
+              <input type="password" class="form-control form-control-sm" value="123" />
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label class="small font-weight-bold mb-1">Cardholder Name</label>
+            <input type="text" id="pgCardName" class="form-control form-control-sm" value="ANANYA SHARMA" />
+          </div>
+        </div>
+
+        <button id="btnConfirmOnlinePay" class="btn btn-primary btn-block font-weight-bold py-2 mt-3" onclick="completeOnlinePayment()">
+          <i class="fas fa-check-circle mr-1"></i> Verify & Pay Now
+        </button>
+        <button class="btn btn-link btn-sm btn-block text-muted mt-1" onclick="closePaymentGateway()">Cancel Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order & Payment Confirmation Modal -->
+  <div id="orderEmailModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.75);z-index:9999;align-items:center;justify-content:center;padding:15px;">
+    <div class="bg-white rounded shadow-lg p-4" style="max-width:520px;width:100%;border-radius:18px !important;">
+      <div class="text-center mb-3">
+        <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle mb-2" style="width:60px;height:60px;">
+          <i class="fas fa-check fa-2x"></i>
+        </div>
+        <h4 class="font-weight-bold text-dark mb-1">Order Confirmed Successfully!</h4>
+        <span class="badge badge-success px-3 py-1" id="confOrderIdBadge">Order #1001</span>
+        <span class="badge badge-primary px-3 py-1 ml-1" id="confTxnBadge">TXN: pay_SK12345</span>
+      </div>
+
+      <div class="border rounded p-3 bg-light mb-3 small">
+        <div class="font-weight-bold text-success mb-2">
+          <i class="fas fa-check-circle mr-1"></i> Direct Farmer-to-Consumer Order Summary:
+        </div>
+        <div class="mb-2 pb-2 border-bottom">
+          <strong>Customer Account:</strong> <span class="text-primary" id="confCustEmailText"></span>
+          <span class="badge badge-success float-right">Verified Buyer</span>
+        </div>
+        <div class="text-muted">
+          Aapka order Farmer dashboard me भेज diya gaya hai. Aap Order History me apna Invoice & Bill download kar sakte hain.
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="corder_history.html" class="btn btn-success font-weight-bold px-4">
+          <i class="fas fa-file-invoice mr-1"></i> View Order History & Bill
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('customer')) {
+      // Redirects automatically if unauthenticated
+    }
+
+    function logout() {
+      SmartKrushi.logout('customer');
+    }
+
+    let pendingOrderPayload = null;
+    let currentCartTotal = 0;
+
+    // Pre-populate customer details from logged-in customer profile
+    function initCustomerDetails() {
+      const cust = SmartKrushi.getCustomerSession() || {};
+      if (cust.name) document.getElementById('custName').value = cust.name;
+      if (cust.phone) document.getElementById('custPhone').value = cust.phone;
+      if (cust.email) document.getElementById('custEmail').value = cust.email;
+      else document.getElementById('custEmail').value = 'ananya.sharma@example.com';
+      if (cust.address) document.getElementById('custAddress').value = cust.address;
+      if (cust.city) document.getElementById('custCity').value = cust.city;
+      if (cust.pincode) document.getElementById('custPincode').value = cust.pincode;
+      if (cust.landmark) document.getElementById('custLandmark').value = cust.landmark;
+    }
+
+    function renderCart() {
+      const cart = SmartKrushi.getCart();
+      const container = document.getElementById('cartItems');
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="card p-5 text-center shadow-sm border-0">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3" style="opacity:0.3;"></i>
+            <h5>Aapka Cart Khali Hai</h5>
+            <p class="text-muted small">Marketplace se taazi fasal select karein aur cart me jodein.</p>
+            <div>
+              <a href="cbuy_crops.html" class="btn btn-success"><i class="fas fa-store mr-1"></i> Browse Marketplace</a>
+            </div>
+          </div>
+        `;
+        document.getElementById('itemCount').textContent = '0';
+        document.getElementById('subTotal').textContent = '₹0';
+        document.getElementById('grandTotal').textContent = '₹0';
+        return;
+      }
+
+      let total = 0;
+      container.innerHTML = cart.map(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        return `
+          <div class="cart-card p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <img src="${SmartKrushi.getImageUrl(item.image)}" alt="${item.name}" onerror="this.src='../assets/img/logo.png'" style="width:85px;height:85px;object-fit:cover;border-radius:12px;" />
+                <div class="ml-3">
+                  <h6 class="mb-1 font-weight-bold text-dark">${item.name}</h6>
+                  <div class="small text-muted mb-1"><i class="fas fa-user-circle mr-1"></i> Farmer: <strong>${item.farmer_name || 'Farmer'}</strong></div>
+                  <div class="text-success font-weight-bold">₹${item.price.toLocaleString('en-IN')} / kg</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="mb-2">Qty: <strong class="badge badge-light border px-2 py-1">${item.quantity} kg</strong></div>
+                <div class="font-weight-bold text-primary h6 mb-1">₹${itemTotal.toLocaleString('en-IN')}</div>
+                <button class="btn btn-sm btn-outline-danger" onclick="removeItem(${item.id})"><i class="fas fa-trash-alt mr-1"></i> Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      currentCartTotal = total;
+      document.getElementById('itemCount').textContent = cart.length + ' (' + cart.reduce((sum, i) => sum + i.quantity, 0) + ' kg)';
+      document.getElementById('subTotal').textContent = '₹' + total.toLocaleString('en-IN');
+      document.getElementById('grandTotal').textContent = '₹' + total.toLocaleString('en-IN');
+    }
+
+    function removeItem(cropId) {
+      SmartKrushi.removeFromCart(cropId);
+      renderCart();
+    }
+
+    function switchPgTab(tab) {
+      if (tab === 'upi') {
+        document.getElementById('tabUpiBtn').classList.add('active');
+        document.getElementById('tabCardBtn').classList.remove('active');
+        document.getElementById('pgUpiSection').style.display = 'block';
+        document.getElementById('pgCardSection').style.display = 'none';
+      } else {
+        document.getElementById('tabCardBtn').classList.add('active');
+        document.getElementById('tabUpiBtn').classList.remove('active');
+        document.getElementById('pgCardSection').style.display = 'block';
+        document.getElementById('pgUpiSection').style.display = 'none';
+      }
+    }
+
+    function closePaymentGateway() {
+      document.getElementById('paymentGatewayModal').style.display = 'none';
+    }
+
+    function completeOnlinePayment() {
+      const btn = document.getElementById('btnConfirmOnlinePay');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verifying Payment with Bank...';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Verify & Pay Now';
+        closePaymentGateway();
+        if (pendingOrderPayload) {
+          const txnId = 'pay_SK' + Math.floor(100000 + Math.random() * 900000);
+          pendingOrderPayload.payment_status = 'Paid Online';
+          pendingOrderPayload.transaction_id = txnId;
+          finalizeOrderAndNotify(pendingOrderPayload);
+        }
+      }, 900);
+    }
+
+    function finalizeOrderAndNotify(orderInfo) {
+      const orderId = SmartKrushi.createOrder(orderInfo, orderInfo.payment_type);
+      if (orderId) {
+        const txn = orderInfo.transaction_id || ('COD-' + orderId);
+        document.getElementById('confOrderIdBadge').textContent = 'Order #' + orderId;
+        document.getElementById('confTxnBadge').textContent = (orderInfo.payment_status || 'Pay on Delivery') + ' | ' + txn;
+        document.getElementById('confCustEmailText').textContent = orderInfo.cust_email;
+        document.getElementById('orderEmailModal').style.display = 'flex';
+        renderCart();
+      } else {
+        alert('Order place karne me samasya aayi. Kripya punah prayas karein.');
+      }
+    }
+
+    function placeOrder() {
+      const cart = SmartKrushi.getCart();
+      if (!cart || cart.length === 0) {
+        alert('Cart khali hai! Kripya pehle marketplace se fasal cart me add karein.');
+        window.location.href = 'cbuy_crops.html';
+        return;
+      }
+
+      const name = document.getElementById('custName').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const email = (document.getElementById('custEmail').value || 'ananya.sharma@example.com').trim();
+      const address = document.getElementById('custAddress').value.trim();
+      const city = document.getElementById('custCity').value.trim();
+      const pincode = document.getElementById('custPincode').value.trim();
+      const landmark = document.getElementById('custLandmark').value.trim();
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'Online Payment (UPI QR / Card)';
+
+      const alertBox = document.getElementById('checkoutAlert');
+      alertBox.classList.add('d-none');
+
+      // Validation
+      if (!name) {
+        alertBox.textContent = 'Kripya apna poora naam enter karein.';
+        alertBox.classList.remove('d-none');
+        document.getElementById('custName').focus();
+        return;
+      }
+
+      const cleanPhone = phone.replace(/\D/g, '');
+      if (!phone || cleanPhone.length < 10) {
+        alertBox.textContent = 'Kripya 10-digit ka valid mobile number enter karein.';
+        alertBox.classList.remove('d-none');
+        document.getElementById('custPhone').focus();
+        return;
+      }
+
+      if (!address) {
+        alertBox.textContent = 'Kripya delivery address enter karein.';
+        alertBox.classList.remove('d-none');
+        document.getElementById('custAddress').focus();
+        return;
+      }
+
+      if (!city) {
+        alertBox.textContent = 'Kripya shahar/city enter karein.';
+        alertBox.classList.remove('d-none');
+        document.getElementById('custCity').focus();
+        return;
+      }
+
+      if (!pincode || pincode.length < 4) {
+        alertBox.textContent = 'Kripya valid pincode enter karein.';
+        alertBox.classList.remove('d-none');
+        document.getElementById('custPincode').focus();
+        return;
+      }
+
+      const orderInfo = {
+        cust_name: name,
+        cust_phone: phone,
+        cust_email: email,
+        delivery_address: address,
+        city: city,
+        pincode: pincode,
+        landmark: landmark,
+        notes: landmark,
+        payment_type: paymentMethod
+      };
+
+      // Persist to current session so user profile is updated with their latest details
+      const currentCust = SmartKrushi.getCustomerSession() || {};
+      SmartKrushi.setCustomerSession({
+        ...currentCust,
+        name: name,
+        phone: phone,
+        email: email,
+        address: address,
+        city: city,
+        pincode: pincode,
+        landmark: landmark
+      });
+
+      pendingOrderPayload = orderInfo;
+
+      // If Online Payment Gateway is selected, launch interactive gateway modal
+      if (paymentMethod.toLowerCase().includes('online')) {
+        document.getElementById('pgAmountText').textContent = '₹' + currentCartTotal.toLocaleString('en-IN');
+        document.getElementById('pgCardName').value = name.toUpperCase();
+        document.getElementById('pgQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent('upi://pay?pa=smartkrushi@icici&pn=SmartKrushi&am=' + currentCartTotal)}`;
+        document.getElementById('paymentGatewayModal').style.display = 'flex';
+      } else {
+        orderInfo.payment_status = 'Pay on Delivery';
+        orderInfo.transaction_id = 'COD-' + Math.floor(100000 + Math.random() * 900000);
+        finalizeOrderAndNotify(orderInfo);
+      }
+    }
+
+    // Initialize
+    initCustomerDetails();
+    renderCart();
+  </script>
+</body>
+</html>

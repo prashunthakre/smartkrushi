@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Customer Profile - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body { background: #f3f7f4; font-family: 'Open Sans', Arial, sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1a7f5a, #1969b3); color: white; }
+    .profile-card { background: white; border-radius: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: none; }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <strong><i class="fas fa-leaf mr-2"></i>SmartKrushi Market</strong>
+      </div>
+      <div class="d-flex align-items-center">
+        <a href="cbuy_crops.html" class="text-white mr-3"><i class="fas fa-store mr-1"></i> Market</a>
+        <a href="ccart.html" class="text-white mr-3"><i class="fas fa-shopping-cart mr-1"></i> Cart</a>
+        <a href="corder_history.html" class="text-white mr-3"><i class="fas fa-history mr-1"></i> Orders</a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="fas fa-power-off mr-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card profile-card p-4">
+          <div class="d-flex align-items-center mb-4">
+            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center mr-3" style="width: 65px; height: 65px; font-size: 28px;">
+              <i class="fas fa-user"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 font-weight-bold" id="cname">Customer Name</h4>
+              <span class="badge badge-success">Verified Buyer</span>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="text-muted small mb-1">Email Address</label>
+              <div class="font-weight-bold" id="cemail">-</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="text-muted small mb-1">Phone Number</label>
+              <div class="font-weight-bold" id="cphone">-</div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <label class="text-muted small mb-1">Delivery Address</label>
+              <div class="font-weight-bold" id="caddress">-</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="text-muted small mb-1">City</label>
+              <div class="font-weight-bold" id="ccity">-</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="text-muted small mb-1">State</label>
+              <div class="font-weight-bold" id="cstate">-</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="text-muted small mb-1">Pincode</label>
+              <div class="font-weight-bold" id="cpincode">-</div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-top d-flex justify-content-between">
+            <a href="cbuy_crops.html" class="btn btn-outline-secondary"><i class="fas fa-arrow-left mr-1"></i> Back to Market</a>
+            <a href="corder_history.html" class="btn btn-success"><i class="fas fa-shopping-bag mr-1"></i> View My Orders</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('customer')) {
+      // Redirects automatically
+    }
+
+    function logout() {
+      SmartKrushi.logout('customer');
+    }
+
+    const cust = SmartKrushi.getCustomerSession();
+    if (!cust) {
+      SmartKrushi.logout('customer');
+    } else {
+      document.getElementById('cname').textContent = cust.name || 'Customer';
+      document.getElementById('cemail').textContent = cust.email || 'customer@smartkrushi.com';
+      document.getElementById('cphone').textContent = cust.phone || '+91 9876543210';
+      document.getElementById('caddress').textContent = cust.address || 'Flat 402, Green Meadows, Model Colony';
+      document.getElementById('ccity').textContent = cust.city || 'Pune';
+      document.getElementById('cstate').textContent = cust.state || 'Maharashtra';
+      document.getElementById('cpincode').textContent = cust.pincode || '411016';
+    }
+  </script>
+</body>
+</html>

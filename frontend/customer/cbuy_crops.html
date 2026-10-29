@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Buy Fresh Crops - SmartKrushi Marketplace</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #f3f7f4; font-family: 'Poppins', sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1a7f5a, #1969b3); color: white; }
+    .card-crop { border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.06); transition: transform 0.2s ease; }
+    .card-crop:hover { transform: translateY(-4px); }
+    .crop-img { height: 185px; object-fit: cover; width: 100%; }
+    .cart-badge { position: fixed; right: 24px; bottom: 18px; z-index: 100; }
+    .filter-bar { background: white; border-radius: 14px; padding: 16px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .toast-banner { position: fixed; top: 80px; right: 24px; z-index: 1050; min-width: 280px; }
+  </style>
+</head>
+<body>
+  <nav class="topbar py-3 sticky-top shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <strong><i class="fas fa-leaf mr-2"></i>SmartKrushi Direct F2C Market</strong>
+      </div>
+      <div class="d-flex align-items-center mt-2 mt-md-0">
+        <a href="../index.html" class="text-white mr-3"><i class="fas fa-home mr-1"></i> Home</a>
+        <a href="corder_history.html" class="text-white mr-3"><i class="fas fa-history mr-1"></i> Orders</a>
+        <a href="cprofile.html" class="text-white mr-3"><i class="fas fa-user-circle mr-1"></i> Profile</a>
+        <button class="btn btn-outline-light btn-sm mr-3 font-weight-bold" onclick="SmartKrushi.openPortalNotificationModal()">
+          <i class="fas fa-bell mr-1"></i> Live Alerts <span class="badge badge-warning">6</span>
+        </button>
+        <a href="ccart.html" class="btn btn-light btn-sm mr-3 font-weight-bold"><i class="fas fa-shopping-cart text-success mr-1"></i> Cart <span id="cartCount" class="badge badge-success">0</span></a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="fas fa-power-off mr-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Toast Notification -->
+  <div id="cartToast" class="alert alert-success shadow-lg toast-banner d-none">
+    <i class="fas fa-check-circle mr-1"></i> <span id="toastText">Added to cart!</span>
+  </div>
+
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+      <div>
+        <h3 class="font-weight-bold mb-1">Fresh Farm Harvest Marketplace</h3>
+        <small class="text-muted">100% Direct Farmer-to-Consumer (F2C) • Zero Middlemen Commission</small>
+      </div>
+      <div class="text-right mt-2 mt-md-0">
+        <div class="small text-muted">Logged in Buyer</div>
+        <strong id="customerName" class="text-success">Customer</strong>
+      </div>
+    </div>
+
+    <!-- Search & Category Filter Bar -->
+    <div class="filter-bar mb-4">
+      <div class="row align-items-center">
+        <div class="col-md-5 mb-2 mb-md-0">
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text bg-light border-right-0"><i class="fas fa-search text-muted"></i></span></div>
+            <input type="text" id="searchInput" class="form-control border-left-0" placeholder="Search crop, farmer, or city (e.g., Wheat, Pune)..." oninput="renderCrops()">
+          </div>
+        </div>
+        <div class="col-md-7 text-md-right">
+          <div class="btn-group btn-group-sm flex-wrap" role="group">
+            <button type="button" class="btn btn-success" id="cat_all" onclick="setCategory('all')">All Crops</button>
+            <button type="button" class="btn btn-outline-success" id="cat_grains" onclick="setCategory('grains')">Grains & Cereals</button>
+            <button type="button" class="btn btn-outline-success" id="cat_pulses" onclick="setCategory('pulses')">Pulses & Dal</button>
+            <button type="button" class="btn btn-outline-success" id="cat_oilseeds" onclick="setCategory('oilseeds')">Oilseeds & Cash Crops</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="cropList" class="row"></div>
+  </div>
+
+  <div class="cart-badge">
+    <a href="ccart.html" class="btn btn-success btn-lg shadow font-weight-bold"><i class="fas fa-shopping-basket mr-1"></i> Proceed to Cart</a>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('customer')) {
+      // Redirects automatically
+    }
+
+    let activeCat = 'all';
+
+    function logout() {
+      SmartKrushi.logout('customer');
+    }
+
+    function getCropCategory(name) {
+      const n = (name || '').toLowerCase();
+      if (n.includes('wheat') || n.includes('rice') || n.includes('bajra') || n.includes('maize') || n.includes('jowar') || n.includes('barley')) return 'grains';
+      if (n.includes('moong') || n.includes('gram') || n.includes('tur') || n.includes('arhar') || n.includes('chana')) return 'pulses';
+      return 'oilseeds';
+    }
+
+    function setCategory(cat) {
+      activeCat = cat;
+      ['all', 'grains', 'pulses', 'oilseeds'].forEach(c => {
+        const btn = document.getElementById('cat_' + c);
+        if (btn) btn.className = (c === cat) ? 'btn btn-success' : 'btn btn-outline-success';
+      });
+      renderCrops();
+    }
+
+    function renderCrops() {
+      const customer = SmartKrushi.getCustomerSession();
+      if (!customer) {
+        SmartKrushi.logout('customer');
+        return;
+      }
+      document.getElementById('customerName').textContent = customer.name;
+
+      const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const allCrops = SmartKrushi.getCrops();
+      const filtered = allCrops.filter(c => {
+        const matchSearch = !q ||
+          (c.name && c.name.toLowerCase().includes(q)) ||
+          (c.farmer_name && c.farmer_name.toLowerCase().includes(q)) ||
+          (c.location && c.location.toLowerCase().includes(q));
+        const matchCat = (activeCat === 'all') || (getCropCategory(c.name) === activeCat);
+        return matchSearch && matchCat;
+      });
+
+      const list = document.getElementById('cropList');
+      const cart = SmartKrushi.getCart();
+      document.getElementById('cartCount').textContent = cart.length;
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-seedling fa-3x mb-2" style="opacity:0.3;"></i><h5>No matching crops found</h5></div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(crop => {
+        const avail = Number(crop.quantity) || 0;
+        const disabled = avail <= 0 ? 'disabled' : '';
+        return `
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card card-crop h-100">
+              <img src="${SmartKrushi.getImageUrl(crop.image)}" alt="${crop.name}" class="crop-img" onerror="this.src='../assets/img/logo.png'" />
+              <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="font-weight-bold mb-0">${crop.name}</h5>
+                    <span class="badge ${avail > 0 ? 'badge-success' : 'badge-danger'}">${avail > 0 ? avail + ' kg Available' : 'Out of Stock'}</span>
+                  </div>
+                  <div class="small text-muted mb-2"><i class="fas fa-user-check text-success mr-1"></i> ${crop.farmer_name} • <i class="fas fa-map-marker-alt text-danger mr-1"></i>${crop.location}</div>
+                  <p class="text-muted small mb-3">${crop.description}</p>
+                </div>
+                <div class="pt-2 border-top">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="text-muted small">Direct Farm Price</div>
+                      <strong class="text-success h5 mb-0">₹${crop.price.toLocaleString('en-IN')}<small>/kg</small></strong>
+                      <div class="small text-muted" style="font-size:11px;"><i class="fas fa-chart-line text-success mr-1"></i>APMC: ₹${(crop.mandi_rate_qtl || Math.round(crop.price * 95)).toLocaleString('en-IN')}/Qtl</div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <input type="number" id="buyQty_${crop.id}" class="form-control form-control-sm mr-2 text-center" style="width:68px;" value="1" min="1" max="${Math.max(1, avail)}" ${disabled}>
+                      <button class="btn btn-primary btn-sm font-weight-bold" onclick="addToCart(${crop.id})" ${disabled}>
+                        <i class="fas fa-cart-plus mr-1"></i> Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function addToCart(cropId) {
+      const qtyInput = document.getElementById('buyQty_' + cropId);
+      const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+      const ok = SmartKrushi.addToCart(cropId, qty);
+      if (ok) {
+        const cart = SmartKrushi.getCart();
+        document.getElementById('cartCount').textContent = cart.length;
+        const toast = document.getElementById('cartToast');
+        document.getElementById('toastText').textContent = `Added ${qty} kg to your cart!`;
+        toast.classList.remove('d-none');
+        setTimeout(() => toast.classList.add('d-none'), 2500);
+      } else {
+        alert('Requested quantity exceeds available stock.');
+      }
+    }
+
+    renderCrops();
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Fertilizer Suggestion - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    body { font-family:'Poppins',sans-serif; background:url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed; background-size:cover; }
+    .overlay { background:rgba(0,0,0,0.5); min-height:100vh; padding-bottom:50px; }
+    .navbar-custom { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%)!important; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:0.7rem 1rem; }
+    .navbar-brand { font-weight:800; font-size:1.5rem; color:white!important; text-transform:uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color:white!important; font-weight:600; margin:0 5px; border-radius:5px; }
+    .navbar-dark .navbar-nav .nav-link:hover { background:rgba(255,255,255,0.2); }
+    .dropdown-menu { border:none; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .glass-panel { background:rgba(255,255,255,0.97); backdrop-filter:blur(10px); border-radius:20px; box-shadow:0 8px 32px rgba(31,38,135,0.37); border:1px solid rgba(255,255,255,0.18); margin-top:30px; overflow:hidden; }
+    .panel-header { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%); padding:25px 30px; color:white; }
+    .section-title { color:#2dce89; font-weight:700; margin-bottom:15px; border-bottom:2px solid #e8f5e9; padding-bottom:8px; }
+    .form-control { border-radius:10px; height:45px; border:1px solid #ddd; }
+    .form-control:focus { box-shadow:0 0 0 0.2rem rgba(40,167,69,0.25); border-color:#28a745; }
+    .btn-predict { background:linear-gradient(45deg,#11998e,#38ef7d); border:none; border-radius:50px; padding:12px 40px; font-size:16px; font-weight:600; color:white; width:100%; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+    .btn-predict:hover { transform:translateY(-2px); color:white; }
+    .result-box { margin-top:30px; padding:30px; background:#fff; border-radius:15px; text-align:center; border-left:6px solid #28a745; animation:slideUp 0.6s ease; box-shadow:0 5px 15px rgba(0,0,0,0.05); }
+    .result-value { font-size:2.2rem; font-weight:800; color:#28a745; text-transform:capitalize; margin:10px 0; }
+    .loader { display:none; border:4px solid #f3f3f3; border-top:4px solid #28a745; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:20px auto; }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body>
+<div class="overlay">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-collapse collapse" id="navbar_global">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+              <a class="dropdown-item" href="fcrop_recommendation.html"><i class="fas fa-microscope text-primary"></i> Soil NPK Crop Recommendation</a>
+              <a class="dropdown-item active" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+              <a class="dropdown-item" href="fyield_prediction.html"><i class="fas fa-chart-bar text-warning"></i> Yield Prediction</a>
+              <a class="dropdown-item" href="frainfall_prediction.html"><i class="fas fa-cloud-rain text-primary"></i> Rainfall Prediction</a>
+              <a class="dropdown-item" href="fweather_forecast.html"><i class="fas fa-cloud-sun text-danger"></i> 5-Day Weather & AI Chatbot</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+              <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+              <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a></li>
+          <li class="nav-item">
+            <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm"><i class="fas fa-power-off"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-md-12">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <h2 class="font-weight-bold m-0"><i class="fas fa-seedling mr-2"></i> Smart Fertilizer Recommender</h2>
+            <p class="m-0 mt-2 opacity-8">Optimize your soil health with AI-driven advice</p>
+          </div>
+          <div class="card-body p-4 p-md-5">
+            <form id="fertilizerForm" onsubmit="return handleFertPredict(event)">
+              <div class="row">
+                <div class="col-md-4 mb-4">
+                  <h5 class="section-title">Soil Composition</h5>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Nitrogen (N)</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-flask"></i></span></div>
+                      <input type="number" id="inputN" class="form-control" placeholder="e.g. 37" required>
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Phosphorus (P)</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-flask"></i></span></div>
+                      <input type="number" id="inputP" class="form-control" placeholder="e.g. 0" required>
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Potassium (K)</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-flask"></i></span></div>
+                      <input type="number" id="inputK" class="form-control" placeholder="e.g. 0" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                  <h5 class="section-title">Environment</h5>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Temperature (°C)</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-thermometer-half"></i></span></div>
+                      <input type="number" step="0.01" id="inputT" class="form-control" placeholder="e.g. 26" required>
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Humidity (%)</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-tint"></i></span></div>
+                      <input type="number" step="0.01" id="inputH" class="form-control" placeholder="e.g. 52" required>
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Soil Moisture</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-water"></i></span></div>
+                      <input type="number" step="0.01" id="inputSM" class="form-control" placeholder="e.g. 38" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                  <h5 class="section-title">Farm Details</h5>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Soil Type</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-layer-group"></i></span></div>
+                      <select id="inputSoil" class="form-control" required>
+                        <option value="">Select Soil Type</option>
+                        <option value="Sandy">Sandy</option>
+                        <option value="Loamy">Loamy</option>
+                        <option value="Black">Black</option>
+                        <option value="Red">Red</option>
+                        <option value="Clayey">Clayey</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="font-weight-bold small text-muted">Target Crop</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-seedling"></i></span></div>
+                      <select id="inputCrop" class="form-control" required>
+                        <option value="">Select Crop</option>
+                        <option value="Maize">Maize</option>
+                        <option value="Sugarcane">Sugarcane</option>
+                        <option value="Cotton">Cotton</option>
+                        <option value="Tobacco">Tobacco</option>
+                        <option value="Paddy">Paddy</option>
+                        <option value="Barley">Barley</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Millets">Millets</option>
+                        <option value="Oil seeds">Oil seeds</option>
+                        <option value="Pulses">Pulses</option>
+                        <option value="Ground Nuts">Ground Nuts</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-6 mx-auto">
+                  <button type="submit" class="btn btn-predict" id="btnSubmit">GET RECOMMENDATION</button>
+                  <div id="loader" class="loader"></div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Result Area -->
+            <div id="resultArea"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-4" style="background:#1a1a2e; color:white;">
+  <div class="container text-center">
+    <p class="mb-0">© 2026 SmartKrushi Agriculture Portal | Direct F2C & AI Crop Advisory System</p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="../js/smart_krushi_core.js"></script>
+<script>
+  // Strict Authentication Guard
+  if (!SmartKrushi.requireAuth('farmer')) {
+    // Redirects automatically via location.replace
+  } else {
+    document.getElementById('navUsername').textContent = SmartKrushi.auth.getCurrentUser().name || 'Farmer';
+  }
+
+  function handleFertPredict(event) {
+    event.preventDefault();
+    var n = document.getElementById('inputN').value;
+    var p = document.getElementById('inputP').value;
+    var k = document.getElementById('inputK').value;
+    var t = document.getElementById('inputT').value;
+    var h = document.getElementById('inputH').value;
+    var sm = document.getElementById('inputSM').value;
+    var soil = document.getElementById('inputSoil').value;
+    var crop = document.getElementById('inputCrop').value;
+
+    document.getElementById('btnSubmit').style.display = 'none';
+    document.getElementById('loader').style.display = 'block';
+
+    setTimeout(function() {
+      var result = SmartKrushi.predict.fertilizer(n, p, k, t, h, sm, soil, crop);
+
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('btnSubmit').style.display = 'block';
+
+      var html = '<div class="result-box">' +
+        '<h6 class="text-uppercase text-muted font-weight-bold">Recommended Fertilizer Application</h6>' +
+        '<div class="result-value"><i class="fas fa-check-circle mr-2"></i>' + result.fertilizer + '</div>' +
+        '<p class="text-secondary small">Confidence: ' + result.confidence + '% | Always consult a local agricultural expert before application.</p>' +
+        '</div>';
+
+      document.getElementById('resultArea').innerHTML = html;
+    }, 2500);
+
+    return false;
+  }
+</script>
+</body>
+</html>

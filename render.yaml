@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: smartkrushi
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python smart_krushi_server.py
+    envVars:
+      - key: SMARTKRUSHI_SMTP_EMAIL
+        value: kushora.otp@gmail.com
+      - key: SMARTKRUSHI_SMTP_PASS
+        sync: false
+

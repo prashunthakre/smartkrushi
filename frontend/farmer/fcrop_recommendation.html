@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Soil NPK Crop Recommendation - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    body { font-family:'Poppins',sans-serif; background:#f4f7f6; }
+    .navbar-custom { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%)!important; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:0.7rem 1rem; }
+    .navbar-brand { font-weight:800; font-size:1.5rem; color:white!important; text-transform:uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color:white!important; font-weight:600; margin:0 5px; border-radius:5px; }
+    .dropdown-menu { border:none; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .glass-panel { background:#fff; border-radius:20px; box-shadow:0 8px 30px rgba(0,0,0,0.08); margin-top:30px; overflow:hidden; }
+    .panel-header { background:linear-gradient(87deg,#11998e 0,#38ef7d 100%); padding:25px 30px; color:white; }
+    .section-title { color:#11998e; font-weight:700; margin-bottom:15px; border-bottom:2px solid #e8f5e9; padding-bottom:8px; }
+    .form-control { border-radius:10px; height:45px; border:1px solid #ddd; }
+    .btn-predict { background:linear-gradient(45deg,#11998e,#38ef7d); border:none; border-radius:50px; padding:12px 40px; font-size:16px; font-weight:600; color:white; width:100%; box-shadow:0 4px 15px rgba(17,153,142,0.3); }
+    .btn-predict:hover { transform:translateY(-2px); color:white; }
+    .result-card { background:#f8fffb; border:2px solid #2dce89; border-radius:16px; padding:25px; margin-top:25px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-collapse collapse" id="navbar_global">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+              <a class="dropdown-item active" href="fcrop_recommendation.html"><i class="fas fa-microscope text-primary"></i> Soil NPK Crop Recommendation</a>
+              <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+              <a class="dropdown-item" href="fyield_prediction.html"><i class="fas fa-chart-bar text-warning"></i> Yield Prediction</a>
+              <a class="dropdown-item" href="frainfall_prediction.html"><i class="fas fa-cloud-rain text-primary"></i> Rainfall Prediction</a>
+              <a class="dropdown-item" href="fweather_forecast.html"><i class="fas fa-cloud-sun text-danger"></i> 5-Day Weather & AI Chatbot</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+              <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+              <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a></li>
+          <li class="nav-item">
+            <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm"><i class="fas fa-power-off"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container pb-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="glass-panel">
+          <div class="panel-header d-flex justify-content-between align-items-center flex-wrap">
+            <div>
+              <h3 class="font-weight-bold m-0"><i class="fas fa-microscope mr-2"></i> Soil NPK & pH Crop Recommendation</h3>
+              <p class="m-0 mt-1 small">Enter your Soil Health Card N-P-K values, pH, and local climate metrics to discover the best crop</p>
+            </div>
+            <span class="badge badge-light text-success p-2 mt-2 mt-md-0"><i class="fas fa-check-circle mr-1"></i> Random Forest / Decision Tree ML</span>
+          </div>
+
+          <div class="card-body p-4 p-md-5">
+            <form id="recForm" onsubmit="return handleRecommend(event)">
+              <div class="row">
+                <div class="col-md-6 mb-4">
+                  <h5 class="section-title"><i class="fas fa-vial mr-1"></i> Soil Nutrient Macronutrients</h5>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Nitrogen (N) Content (kg/ha)</label>
+                    <input type="number" id="recN" class="form-control" value="90" min="0" max="200" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Phosphorus (P) Content (kg/ha)</label>
+                    <input type="number" id="recP" class="form-control" value="42" min="0" max="200" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Potassium (K) Content (kg/ha)</label>
+                    <input type="number" id="recK" class="form-control" value="43" min="0" max="250" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Soil pH Value (0 - 14)</label>
+                    <input type="number" step="0.1" id="recPh" class="form-control" value="6.5" min="3.5" max="9.5" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                  <h5 class="section-title"><i class="fas fa-cloud-sun-rain mr-1"></i> Climatic Parameters</h5>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Ambient Temperature (°C)</label>
+                    <input type="number" step="0.1" id="recTemp" class="form-control" value="26.5" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Relative Humidity (%)</label>
+                    <input type="number" step="0.1" id="recHum" class="form-control" value="78.0" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="font-weight-bold small text-muted">Seasonal Rainfall (mm)</label>
+                    <input type="number" step="1" id="recRain" class="form-control" value="195" required>
+                  </div>
+                  <div class="alert alert-light border small text-muted mt-4">
+                    <i class="fas fa-info-circle text-success mr-1"></i> <strong>Tip:</strong> Values can be copied directly from your Government Soil Health Card report.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mx-auto">
+                  <button type="submit" class="btn btn-predict"><i class="fas fa-magic mr-2"></i> RECOMMEND BEST CROP</button>
+                </div>
+              </div>
+            </form>
+
+            <div id="recResultArea"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (SmartKrushi.auth.isLoggedIn()) {
+      const user = SmartKrushi.getFarmerSession();
+      if (user && user.name) document.getElementById('navUsername').textContent = user.name;
+    }
+
+    function handleRecommend(e) {
+      e.preventDefault();
+      const N = document.getElementById('recN').value;
+      const P = document.getElementById('recP').value;
+      const K = document.getElementById('recK').value;
+      const ph = document.getElementById('recPh').value;
+      const temp = document.getElementById('recTemp').value;
+      const hum = document.getElementById('recHum').value;
+      const rain = document.getElementById('recRain').value;
+
+      const res = SmartKrushi.recommendCrop(N, P, K, temp, hum, ph, rain);
+      const info = SmartKrushi.getCropWeatherIntelligence(res.crop, 'kharif', 'Maharashtra');
+
+      document.getElementById('recResultArea').innerHTML = `
+        <div class="result-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap border-bottom pb-3 mb-3">
+            <div>
+              <span class="badge badge-success px-3 py-1 mb-2">ML MODEL OUTPUT • CONFIDENCE ${res.confidence}</span>
+              <h3 class="font-weight-bold text-dark mb-0">${info.icon} ${res.crop} <span class="text-muted h5">(${info.name_hi})</span></h3>
+            </div>
+            <div class="text-right mt-2 mt-md-0">
+              <div class="small text-muted">Ideal Temperature</div>
+              <strong class="text-success">${info.temp_range}</strong>
+            </div>
+          </div>
+          <p class="text-dark mb-2"><strong><i class="fas fa-check-circle text-success mr-1"></i> Scientific Rationale (English):</strong> ${res.reason}</p>
+          <p class="text-dark mb-3"><strong><i class="fas fa-language text-primary mr-1"></i> कृषि विशेषज्ञ सलाह (हिन्दी):</strong> ${info.why_hi}</p>
+          <div class="row text-center mt-3">
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border">
+                <div class="small text-muted">Water Requirement</div>
+                <strong class="text-primary">${info.water_req_en}</strong>
+              </div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border">
+                <div class="small text-muted">Crop Duration</div>
+                <strong class="text-dark">${info.duration_en}</strong>
+              </div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <div class="p-3 bg-white rounded border">
+                <div class="small text-muted">Preferred Soil</div>
+                <strong class="text-success">${info.soil_en}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      return false;
+    }
+  </script>
+</body>
+</html>
+

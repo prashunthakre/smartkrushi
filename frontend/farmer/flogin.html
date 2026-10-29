@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Farmer Login - SmartKrushi</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+  <link rel="stylesheet" href="../assets/css/creativetim.min.css" type="text/css">
+
+  <style>
+      .bg-login {
+          background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../assets/img/harvest.jpg'); 
+          background-size: cover;
+          background-position: center;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+      }
+      .card-login {
+          border: none;
+          border-radius: 1rem;
+          box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+          overflow: hidden;
+      }
+      .login-header {
+          background: #2dce89;
+          color: white;
+      }
+      .demo-badge {
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          background: rgba(45, 206, 137, 0.9);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 12px;
+          z-index: 9999;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      }
+  </style>
+</head>
+
+<body class="bg-login">
+
+<!-- Top Left Home Button -->
+<a href="../index.html" class="btn btn-sm text-white font-weight-bold" style="position: fixed; top: 20px; left: 20px; z-index: 1000; border-radius: 30px; padding: 8px 20px; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.4); text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+    <i class="fas fa-home mr-1 text-success"></i> Home
+</a>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            
+            <div class="text-center text-white mb-4">
+                <h2 class="font-weight-bold">SmartKrushi</h2>
+                <p>Welcome back, Farmer!</p>
+            </div>
+
+            <!-- Alert for login messages -->
+            <div id="loginAlert" class="alert d-none" role="alert"></div>
+
+            <div class="card card-login">
+                <div class="card-header login-header text-center pt-4 pb-4">
+                    <h4 class="text-white mb-0">Login</h4>
+                </div>
+                <div class="card-body px-lg-5 py-lg-5">
+                    
+                    <form id="farmerLoginForm" onsubmit="return handleLogin(event)">
+                        <div class="form-group mb-3">
+                            <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                </div>
+                                <input class="form-control" placeholder="Email or Phone Number" type="text" id="farmer_email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-alternative">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                </div>
+                                <input class="form-control" placeholder="Password" type="password" id="password" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text cursor-pointer" onclick="togglePass()">
+                                        <i class="fas fa-eye" id="eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="custom-control custom-control-alternative custom-checkbox">
+                            <input class="custom-control-input" id="customCheckLogin" type="checkbox">
+                            <label class="custom-control-label" for="customCheckLogin">
+                                <span class="text-muted">Remember me</span>
+                            </label>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success my-4 btn-block font-weight-bold">Sign in</button>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <span class="text-muted">OR</span>
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary btn-block" data-toggle="modal" data-target="#otpModal">
+                            <i class="fas fa-mobile-alt"></i> Login with OTP
+                        </button>
+
+                    </form>
+                </div>
+                <div class="card-footer bg-secondary text-center py-3">
+                     <div class="row mb-2">
+                         <div class="col-6">
+                             <a href="#" class="text-primary" data-toggle="modal" data-target="#forgotModal"><small>Forgot password?</small></a>
+                         </div>
+                         <div class="col-6 text-right">
+                             <a href="fregister.html" class="text-primary"><small>Create new account</small></a>
+                         </div>
+                     </div>
+                     <div class="pt-2 border-top">
+                         <a href="../index.html" class="text-muted small font-weight-bold"><i class="fas fa-arrow-left mr-1"></i> Back to Homepage</a>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OTP Modal (2-Step Real 6-Digit OTP Verification) -->
+<div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-shield-alt text-success mr-1"></i> Login with 6-Digit OTP</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="otpStepAlert" class="alert d-none small py-2"></div>
+        <div id="otpStep1">
+          <div class="form-group">
+            <label class="small font-weight-bold">Enter Registered Email or Mobile Number</label>
+            <input type="text" class="form-control" id="otpMobile" placeholder="e.g. prashun2203@gmail.com or 9876543210">
+          </div>
+          <button type="button" class="btn btn-primary btn-block font-weight-bold" onclick="requestFarmerOTP()">
+            <i class="fas fa-paper-plane mr-1"></i> Generate & Send 6-Digit OTP
+          </button>
+        </div>
+        <div id="otpStep2" class="d-none mt-3 pt-3 border-top">
+          <div class="form-group">
+            <label class="small font-weight-bold">Enter 6-Digit Verification OTP</label>
+            <input type="text" class="form-control text-center font-weight-bold h5" id="otpCodeInput" maxlength="6" placeholder="••••••" style="letter-spacing:6px;">
+          </div>
+          <button type="button" class="btn btn-success btn-block font-weight-bold" onclick="verifyFarmerOTP()">
+            <i class="fas fa-check-circle mr-1"></i> Verify OTP & Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Card Modal (Step-by-Step: Email -> Verify OTP (10 Min) -> New & Confirm Password -> Change Password) -->
+<div class="modal fade" id="forgotModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg" style="border-radius:16px;overflow:hidden;">
+      <div class="modal-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="modal-title font-weight-bold mb-0"><i class="fas fa-key text-warning mr-1"></i> Forgot Password Card (Farmer)</h5>
+        <button type="button" class="btn btn-sm btn-outline-danger font-weight-bold" data-dismiss="modal" aria-label="Close">
+          <i class="fas fa-times mr-1"></i> Close Card
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-end align-items-center mb-2">
+          <span class="badge badge-warning px-2 py-1" id="farmerResetTimerBadge">
+            <i class="far fa-clock mr-1"></i> OTP Validity: 10:00
+          </span>
+        </div>
+        <div id="resetAlert" class="alert d-none small py-2"></div>
+
+        <!-- Step 1: Enter Registered Email ID -->
+        <div class="form-group">
+          <label class="small font-weight-bold">1. Enter Registered Email ID</label>
+          <div class="input-group">
+            <input type="text" id="resetIdentifier" class="form-control" placeholder="e.g. prashun2203@gmail.com">
+            <div class="input-group-append">
+              <button type="button" class="btn btn-success font-weight-bold" onclick="requestFarmerResetOTP()">
+                <i class="fas fa-paper-plane mr-1"></i> Send OTP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Enter OTP Below Email & Click Verify OTP -->
+        <div id="resetOtpBox" class="form-group d-none p-3 rounded border bg-light">
+          <label class="small font-weight-bold text-dark">2. Enter 6-Digit OTP (Valid for 10 Minutes)</label>
+          <div class="input-group">
+            <input type="text" id="resetOtpInput" class="form-control text-center font-weight-bold" maxlength="6" placeholder="Enter 6-Digit OTP" style="letter-spacing:5px;">
+            <div class="input-group-append">
+              <button type="button" id="btnVerifyFarmerResetOtp" class="btn btn-primary font-weight-bold" onclick="verifyFarmerResetOTP()">
+                <i class="fas fa-check-circle mr-1"></i> Verify OTP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Unlocked After OTP Verification -> New Password, Confirm Password & Change Password -->
+        <div id="resetPasswordFieldsBox" class="d-none pt-2 border-top">
+          <div class="form-group">
+            <label class="small font-weight-bold">3. New Password</label>
+            <input type="password" id="resetNewPass" class="form-control" placeholder="Enter New Password (min 4 chars)">
+          </div>
+          <div class="form-group">
+            <label class="small font-weight-bold">4. Confirm Password</label>
+            <input type="password" id="resetConfirmPass" class="form-control" placeholder="Re-enter Confirm Password">
+          </div>
+          <button type="button" class="btn btn-warning btn-block font-weight-bold" onclick="handlePasswordReset()">
+            <i class="fas fa-save mr-1"></i> Change Password
+          </button>
+        </div>
+
+        <div class="text-center mt-3 pt-2 border-top">
+          <button type="button" class="btn btn-sm btn-link text-muted font-weight-bold" data-dismiss="modal">
+            <i class="fas fa-arrow-left mr-1"></i> Cancel & Back to Sign In
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="../js/smart_krushi_core.js"></script>
+<script>
+    // Toggle password visibility
+    function togglePass() {
+        var x = document.getElementById("password");
+        var y = document.getElementById("eye");
+        if (x.type === "password") {
+            x.type = "text";
+            y.classList.remove("fa-eye");
+            y.classList.add("fa-eye-slash");
+        } else {
+            x.type = "password";
+            y.classList.remove("fa-eye-slash");
+            y.classList.add("fa-eye");
+        }
+    }
+
+    // Handle login via SmartKrushi authentication engine
+    function handleLogin(event) {
+        event.preventDefault();
+        var email = document.getElementById('farmer_email').value;
+        var password = document.getElementById('password').value;
+        
+        var result = SmartKrushi.auth.login(email, password, 'farmer');
+        var alertBox = document.getElementById('loginAlert');
+        
+        if (result.success) {
+            alertBox.className = 'alert alert-success';
+            alertBox.innerHTML = '<i class="fas fa-check-circle"></i> ' + result.message + ' Redirecting...';
+            alertBox.classList.remove('d-none');
+            
+            setTimeout(function() {
+                window.location.href = 'fdashboard.html';
+            }, 1000);
+        } else {
+            alertBox.className = 'alert alert-danger';
+            alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + result.message;
+            alertBox.classList.remove('d-none');
+        }
+        return false;
+    }
+
+    function requestFarmerOTP() {
+        var ident = document.getElementById('otpMobile').value;
+        var stepAlert = document.getElementById('otpStepAlert');
+        var res = SmartKrushi.auth.sendOtp(ident, 'farmer');
+        if (res.success) {
+            stepAlert.className = 'alert alert-success small py-2';
+            stepAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit OTP has been sent to your registered Email ID (<strong>${res.email}</strong>). Please check your inbox and enter the OTP below.`;
+            stepAlert.classList.remove('d-none');
+            document.getElementById('otpCodeInput').value = '';
+            document.getElementById('otpStep2').classList.remove('d-none');
+            document.getElementById('otpCodeInput').focus();
+        } else {
+            stepAlert.className = 'alert alert-danger small py-2';
+            stepAlert.textContent = res.message;
+            stepAlert.classList.remove('d-none');
+        }
+    }
+
+    function verifyFarmerOTP() {
+        var ident = document.getElementById('otpMobile').value;
+        var code = document.getElementById('otpCodeInput').value;
+        var res = SmartKrushi.auth.verifyOtpAndLogin(ident, code, 'farmer');
+        var stepAlert = document.getElementById('otpStepAlert');
+        if (res.success) {
+            $('#otpModal').modal('hide');
+            var alertBox = document.getElementById('loginAlert');
+            alertBox.className = 'alert alert-success';
+            alertBox.innerHTML = '<i class="fas fa-check-circle"></i> ' + res.message + ' Redirecting...';
+            alertBox.classList.remove('d-none');
+            setTimeout(function() {
+                window.location.href = 'fdashboard.html';
+            }, 900);
+        } else {
+            stepAlert.className = 'alert alert-danger small py-2';
+            stepAlert.textContent = res.message;
+            stepAlert.classList.remove('d-none');
+        }
+    }
+
+    var farmerResetTimer = null;
+    function startFarmerResetCountdown(seconds) {
+        if (farmerResetTimer) clearInterval(farmerResetTimer);
+        var rem = seconds;
+        var badge = document.getElementById('farmerResetTimerBadge');
+        farmerResetTimer = setInterval(function() {
+            rem--;
+            if (rem <= 0) {
+                clearInterval(farmerResetTimer);
+                if (badge) badge.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i> OTP Expired (10:00)';
+                return;
+            }
+            var m = String(Math.floor(rem / 60)).padStart(2, '0');
+            var s = String(rem % 60).padStart(2, '0');
+            if (badge) badge.innerHTML = '<i class="far fa-clock mr-1"></i> OTP Validity: ' + m + ':' + s;
+        }, 1000);
+    }
+
+    function requestFarmerResetOTP() {
+        var ident = document.getElementById('resetIdentifier').value;
+        var resetAlert = document.getElementById('resetAlert');
+        var res = SmartKrushi.auth.sendPasswordResetOtp(ident, 'farmer');
+        if (res.success) {
+            resetAlert.className = 'alert alert-info small py-2';
+            resetAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit Password Reset OTP has been sent to your Email ID (<strong>${res.email}</strong>). Please check your inbox, enter the OTP below, and click <strong>Verify OTP</strong>.`;
+            resetAlert.classList.remove('d-none');
+            document.getElementById('resetOtpBox').classList.remove('d-none');
+            document.getElementById('resetPasswordFieldsBox').classList.add('d-none');
+            document.getElementById('resetOtpInput').value = '';
+            document.getElementById('resetOtpInput').readOnly = false;
+            document.getElementById('resetOtpInput').focus();
+            startFarmerResetCountdown(600);
+        } else {
+            resetAlert.className = 'alert alert-danger small py-2';
+            resetAlert.textContent = res.message;
+            resetAlert.classList.remove('d-none');
+        }
+    }
+
+    function verifyFarmerResetOTP() {
+        var ident = document.getElementById('resetIdentifier').value;
+        var enteredOtp = document.getElementById('resetOtpInput').value;
+        var resetAlert = document.getElementById('resetAlert');
+        var res = SmartKrushi.auth.verifyPasswordResetOtp(ident, enteredOtp, 'farmer');
+        if (res.success) {
+            resetAlert.className = 'alert alert-success small py-2';
+            resetAlert.innerHTML = '<i class="fas fa-check-circle mr-1"></i> ' + res.message;
+            resetAlert.classList.remove('d-none');
+            document.getElementById('resetOtpInput').readOnly = true;
+            document.getElementById('resetPasswordFieldsBox').classList.remove('d-none');
+            document.getElementById('resetNewPass').focus();
+        } else {
+            resetAlert.className = 'alert alert-danger small py-2';
+            resetAlert.textContent = res.message;
+            resetAlert.classList.remove('d-none');
+        }
+    }
+
+    function handlePasswordReset() {
+        var ident = document.getElementById('resetIdentifier').value;
+        var enteredOtp = document.getElementById('resetOtpInput').value;
+        var newPass = document.getElementById('resetNewPass').value;
+        var confirmPass = document.getElementById('resetConfirmPass').value;
+        var resetAlert = document.getElementById('resetAlert');
+        var previewBox = document.getElementById('resetMailPreview');
+
+        if (!newPass || !confirmPass) {
+            resetAlert.className = 'alert alert-danger small py-2';
+            resetAlert.textContent = 'Please fill both New Password and Confirm Password.';
+            resetAlert.classList.remove('d-none');
+            return;
+        }
+        if (newPass !== confirmPass) {
+            resetAlert.className = 'alert alert-danger small py-2';
+            resetAlert.textContent = 'New Password and Confirm Password do not match! Please enter the same password.';
+            resetAlert.classList.remove('d-none');
+            return;
+        }
+
+        var res = SmartKrushi.auth.resetPassword(ident, newPass, 'farmer', enteredOtp, confirmPass);
+        if (res.success) {
+            if (farmerResetTimer) clearInterval(farmerResetTimer);
+            resetAlert.className = 'alert alert-success small py-2';
+            resetAlert.innerHTML = '<i class="fas fa-check-circle mr-1"></i> ' + res.message + ' Redirecting to Login Page...';
+            resetAlert.classList.remove('d-none');
+            setTimeout(function() {
+                window.location.href = 'flogin.html?password_changed=' + encodeURIComponent(res.email || ident);
+            }, 900);
+        } else {
+            resetAlert.className = 'alert alert-danger small py-2';
+            resetAlert.textContent = res.message;
+            resetAlert.classList.remove('d-none');
+        }
+    }
+
+    // Check URL query for post-registration or post-password-reset redirect
+    (function initUrlAlerts() {
+        var params = new URLSearchParams(window.location.search);
+        var regEmail = params.get('registered');
+        var pwdEmail = params.get('password_changed');
+        var alertBox = document.getElementById('loginAlert');
+        if (regEmail) {
+            document.getElementById('farmer_email').value = regEmail;
+            alertBox.className = 'alert alert-success small';
+            alertBox.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Registration Completed & Verified! Please sign in with your email and password.';
+            alertBox.classList.remove('d-none');
+        } else if (pwdEmail) {
+            document.getElementById('farmer_email').value = pwdEmail;
+            alertBox.className = 'alert alert-success small';
+            alertBox.innerHTML = '<i class="fas fa-check-circle mr-1"></i> Password Changed Successfully! Please sign in with your new password.';
+            alertBox.classList.remove('d-none');
+        }
+    })();
+
+    // Check if already logged in
+    function checkAlreadyLoggedIn() {
+        if (SmartKrushi.auth.isLoggedIn() && SmartKrushi.auth.getCurrentUser().type === 'farmer') {
+            window.location.replace('fdashboard.html');
+        }
+    }
+    checkAlreadyLoggedIn();
+    window.addEventListener('pageshow', function(event) {
+        checkAlreadyLoggedIn();
+    });
+</script>
+</body>
+</html>

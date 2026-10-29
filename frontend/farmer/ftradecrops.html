@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Trade Crops - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    .navbar-custom { background:linear-gradient(87deg,#2dce89 0,#2dcecc 100%)!important; box-shadow:0 4px 15px rgba(0,0,0,0.1); padding:0.7rem 1rem; }
+    .navbar-brand { font-weight:800; font-size:1.5rem; color:white!important; text-transform:uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color:white!important; font-weight:600; margin:0 5px; border-radius:5px; }
+    .navbar-dark .navbar-nav .nav-link:hover { background:rgba(255,255,255,0.2); }
+    .dropdown-menu { border:none; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+    .trade-header { background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('../assets/img/harvest.jpg'); background-size:cover; background-position:center; padding-top:80px; padding-bottom:150px; }
+    .form-control-label { font-weight:600; font-size:0.9rem; color:#32325d; }
+    .input-group-text { background-color:#fff; }
+  </style>
+</head>
+<body class="bg-light">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-collapse collapse" id="navbar_global">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+              <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+              <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+              <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a></li>
+          <li class="nav-item">
+            <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm"><i class="fas fa-power-off"></i> Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <div class="trade-header">
+    <div class="container text-center">
+      <h1 class="display-3 text-white font-weight-bold"><i class="fas fa-balance-scale"></i> Trade Market</h1>
+      <p class="lead text-white-50">Bulk trading made easy. List your Quintals and get the best market rates.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="container" style="margin-top:-100px; padding-bottom:50px;">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card bg-secondary shadow border-0">
+          <div class="card-header bg-white pb-3">
+            <div class="text-center mb-1">
+              <h3 class="text-success font-weight-bold">Update Crop Stock</h3>
+              <p class="small text-muted mb-0">Fill in the details below to publish your listing (In Quintals).</p>
+            </div>
+          </div>
+          <div class="card-body px-lg-5 py-lg-5">
+            <form id="tradeForm" onsubmit="return handleTrade(event)">
+
+              <div class="alert alert-primary alert-dismissible fade show" role="alert" id="popup" style="display:none;">
+                <span class="alert-inner--icon"><i class="fas fa-info-circle"></i></span>
+                <span class="alert-inner--text"><strong>Market Insight:</strong> Avg Price for <span id="crop_name_display" class="font-weight-bold text-uppercase"></span> is <strong>₹<span id="price"></span>/Quintal</strong></span>
+                <button type="button" class="close" onclick="document.getElementById('popup').style.display='none'"><span>&times;</span></button>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-4">
+                    <label class="form-control-label">Select Crop</label>
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-seedling text-success"></i></span></div>
+                      <select id="crops" class="form-control" required>
+                        <option value="">Choose Crop...</option>
+                        <option value="arhar">Arhar</option>
+                        <option value="bajra">Bajra</option>
+                        <option value="barley">Barley</option>
+                        <option value="cotton">Cotton</option>
+                        <option value="gram">Gram</option>
+                        <option value="jowar">Jowar</option>
+                        <option value="jute">Jute</option>
+                        <option value="lentil">Lentil</option>
+                        <option value="maize">Maize</option>
+                        <option value="moong">Moong</option>
+                        <option value="ragi">Ragi</option>
+                        <option value="rice">Rice</option>
+                        <option value="soyabean">Soyabean</option>
+                        <option value="urad">Urad</option>
+                        <option value="wheat">Wheat</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-4">
+                    <label class="form-control-label">Quantity (in Quintals)</label>
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-weight-hanging text-success"></i></span></div>
+                      <input type="number" id="quantity" class="form-control" placeholder="e.g. 50" min="1" step="0.01" required>
+                    </div>
+                    <small class="text-muted">1 Quintal = 100 KG</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-4">
+                    <label class="form-control-label">Price per Quintal (₹)</label>
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-rupee-sign text-success"></i></span></div>
+                      <input type="number" id="trade_farmer_cost" class="form-control" placeholder="e.g. 2500" min="1" required>
+                    </div>
+                    <small class="text-muted font-italic">Auto-filled based on market avg.</small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-4">
+                    <label class="form-control-label">Upload Crop Photo</label>
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="crop_image" accept="image/*" onchange="previewImage(event)">
+                      <label class="custom-file-label" for="crop_image" id="fileLabel">Select file...</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group mb-4">
+                    <label class="form-control-label">Crop Information / Description</label>
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-edit text-success"></i></span></div>
+                      <textarea id="cropInfo" class="form-control" rows="3" placeholder="Describe quality, variety (e.g. Lokwan Wheat), or organic details..." required></textarea>
+                    </div>
+                    <small class="text-muted">Mention specific details to attract more buyers.</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center mb-4">
+                <div class="col-md-6">
+                  <div class="card shadow-sm">
+                    <div class="card-body p-2 text-center bg-white rounded">
+                      <span class="d-block small text-muted mb-2 font-weight-bold">Image Preview</span>
+                      <img id="preview" src="../assets/img/agri.png" alt="Preview" style="max-width:100%; max-height:200px; object-fit:contain; border-radius:5px;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg shadow-lg px-5">
+                  <i class="fas fa-check-circle"></i> List Stock
+                </button>
+              </div>
+            </form>
+
+            <!-- Success Message -->
+            <div id="successArea"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="py-4" style="background:#1a1a2e; color:white;">
+    <div class="container text-center"><p class="mb-0">© 2026 SmartKrushi Agriculture Portal | Direct F2C & AI Crop Advisory System</p></div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('farmer')) {
+      // Redirects automatically via location.replace
+    } else {
+      document.getElementById('navUsername').textContent = SmartKrushi.auth.getCurrentUser().name || 'Farmer';
+    }
+
+    // Live 2026 APMC Mandi Benchmark Prices (₹ per Quintal)
+    var marketPrices = {
+      arhar: 7600,
+      bajra: 2250,
+      barley: 1950,
+      cotton: 6800,
+      gram: 5650,
+      jowar: 3180,
+      jute: 5050,
+      lentil: 6400,
+      maize: 2225,
+      moong: 8558,
+      ragi: 3846,
+      rice: 3200,
+      soyabean: 4850,
+      urad: 7400,
+      wheat: 2450
+    };
+
+    document.getElementById('crops').addEventListener('change', function() {
+      var crop = this.value;
+      if (crop && marketPrices[crop]) {
+        document.getElementById('crop_name_display').textContent = crop;
+        document.getElementById('price').textContent = marketPrices[crop];
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('trade_farmer_cost').value = marketPrices[crop];
+      } else {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('trade_farmer_cost').value = '';
+      }
+    });
+
+    function previewImage(event) {
+      var reader = new FileReader();
+      reader.onload = function() { document.getElementById('preview').src = reader.result; };
+      reader.readAsDataURL(event.target.files[0]);
+      document.getElementById('fileLabel').textContent = event.target.files[0].name;
+    }
+
+    function handleTrade(event) {
+      event.preventDefault();
+      var crop = document.getElementById('crops').value;
+      var qty = document.getElementById('quantity').value;
+      var price = document.getElementById('trade_farmer_cost').value;
+      var info = document.getElementById('cropInfo').value;
+
+      // Save to localStorage via SmartKrushi
+      SmartKrushi.addStock({
+        crop_name: crop, quantity: parseFloat(qty),
+        price: parseFloat(price), info: info,
+        farmer_id: SmartKrushi.getFarmerSession().farmer_id,
+        date: new Date().toISOString().split('T')[0]
+      });
+
+      document.getElementById('successArea').innerHTML =
+        '<div class="alert alert-success mt-4 text-center" style="animation:slideUp 0.5s ease;">' +
+        '<h4><i class="fas fa-check-circle"></i> Stock Listed Successfully!</h4>' +
+        '<p>' + qty + ' Quintals of <strong>' + crop.toUpperCase() + '</strong> at ₹' + price + '/Quintal</p>' +
+        '<a href="fstock_crop.html" class="btn btn-outline-success">View Stocks</a>' +
+        '</div>';
+
+      document.getElementById('tradeForm').reset();
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('preview').src = '../assets/img/agri.png';
+      return false;
+    }
+  </script>
+</body>
+</html>

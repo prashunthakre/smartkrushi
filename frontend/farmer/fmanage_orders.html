@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Manage Customer Orders - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body { background: #f3f7f4; font-family: 'Open Sans', Arial, sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1d9c7b, #157347); color: white; }
+    .order-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #e3ece6; transition: transform 0.2s ease; }
+    .order-card:hover { transform: translateY(-2px); }
+    .customer-info-box { background: #f8faf9; border-radius: 12px; border-left: 4px solid #1d9c7b; padding: 14px; }
+    .badge-status-pending { background-color: #ffeeba; color: #856404; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
+    .badge-status-ready { background-color: #d4edda; color: #155724; font-weight: 600; padding: 6px 12px; border-radius: 20px; }
+    .stats-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+  </style>
+</head>
+<body>
+  <nav class="topbar py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div><strong><i class="fas fa-boxes mr-2"></i> SmartKrushi • Farmer Portal</strong></div>
+      <div class="d-flex align-items-center">
+        <a href="fdashboard.html" class="text-white mr-3"><i class="fas fa-home mr-1"></i> Dashboard</a>
+        <a href="ftradecrops.html" class="text-white mr-3"><i class="fas fa-seedling mr-1"></i> My Crops</a>
+        <a href="fselling_history.html" class="text-white mr-3"><i class="fas fa-history mr-1"></i> Sales History</a>
+        <button class="btn btn-outline-light btn-sm" onclick="SmartKrushi.logout('farmer')"><i class="fas fa-power-off mr-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="font-weight-bold mb-1"><i class="fas fa-clipboard-list text-success mr-2"></i> Customer Orders</h3>
+        <p class="text-muted small mb-0">Customers dwara diye gaye orders aur unka delivery address & phone number dekhein</p>
+      </div>
+      <div>
+        <button class="btn btn-outline-success btn-sm mr-2 font-weight-bold" onclick="SmartKrushi.openPortalNotificationModal()">
+          <i class="fas fa-bell mr-1"></i> Live Mandi & Weather Notifications <span class="badge badge-success ml-1">6</span>
+        </button>
+        <a href="fdashboard.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left mr-1"></i> Back to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-6 mb-2">
+        <div class="stats-card text-center">
+          <div class="text-muted small text-uppercase">Total Orders</div>
+          <h4 class="font-weight-bold text-dark mb-0" id="totalOrdersCount">0</h4>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-2">
+        <div class="stats-card text-center">
+          <div class="text-muted small text-uppercase">Pending Orders</div>
+          <h4 class="font-weight-bold text-warning mb-0" id="pendingOrdersCount">0</h4>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-2">
+        <div class="stats-card text-center">
+          <div class="text-muted small text-uppercase">Ready / Completed</div>
+          <h4 class="font-weight-bold text-success mb-0" id="readyOrdersCount">0</h4>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-2">
+        <div class="stats-card text-center">
+          <div class="text-muted small text-uppercase">Total Revenue</div>
+          <h4 class="font-weight-bold text-primary mb-0" id="totalRevenueAmount">₹0</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-success active" id="btnFilterAll" onclick="filterOrders('all')">All Orders</button>
+        <button type="button" class="btn btn-outline-success" id="btnFilterPending" onclick="filterOrders('pending')">Pending</button>
+        <button type="button" class="btn btn-outline-success" id="btnFilterReady" onclick="filterOrders('ready')">Ready for Pickup</button>
+      </div>
+      <div class="small text-muted">
+        <i class="fas fa-shield-alt text-success mr-1"></i> Verified Customer Profiles
+      </div>
+    </div>
+
+    <!-- Orders List Container -->
+    <div id="ordersContainer"></div>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('farmer')) {
+      // Redirects automatically
+    }
+
+    const currentFarmer = SmartKrushi.getFarmerSession() || {};
+    let allOrders = SmartKrushi.getFarmerOrders(currentFarmer.farmer_id || 63);
+    let currentFilter = 'all';
+
+    function updateStats() {
+      const total = allOrders.length;
+      const pending = allOrders.filter(o => (o.order_status || '').toLowerCase() === 'pending').length;
+      const ready = allOrders.filter(o => (o.order_status || '').toLowerCase().includes('ready')).length;
+      const revenue = allOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+
+      document.getElementById('totalOrdersCount').textContent = total;
+      document.getElementById('pendingOrdersCount').textContent = pending;
+      document.getElementById('readyOrdersCount').textContent = ready;
+      document.getElementById('totalRevenueAmount').textContent = '₹' + revenue.toLocaleString('en-IN');
+    }
+
+    function filterOrders(type) {
+      currentFilter = type;
+      document.getElementById('btnFilterAll').className = type === 'all' ? 'btn btn-success active' : 'btn btn-outline-success';
+      document.getElementById('btnFilterPending').className = type === 'pending' ? 'btn btn-success active' : 'btn btn-outline-success';
+      document.getElementById('btnFilterReady').className = type === 'ready' ? 'btn btn-success active' : 'btn btn-outline-success';
+      renderOrders();
+    }
+
+    function renderOrders() {
+      let filtered = allOrders;
+      if (currentFilter === 'pending') {
+        filtered = allOrders.filter(o => (o.order_status || '').toLowerCase() === 'pending');
+      } else if (currentFilter === 'ready') {
+        filtered = allOrders.filter(o => (o.order_status || '').toLowerCase().includes('ready'));
+      }
+
+      const container = document.getElementById('ordersContainer');
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="card p-5 text-center shadow-sm border-0">
+            <i class="fas fa-box-open fa-3x text-muted mb-3" style="opacity:0.3;"></i>
+            <h5>Koi Order Nahi Mila</h5>
+            <p class="text-muted small">Jaise hi koi customer fasal khareedega, uska order aur poori jankari yaha dikhegi.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(o => {
+        const isReady = (o.order_status || '').toLowerCase().includes('ready');
+        const statusBadge = isReady 
+          ? '<span class="badge-status-ready"><i class="fas fa-check-circle mr-1"></i> Ready for Pickup</span>'
+          : '<span class="badge-status-pending"><i class="fas fa-clock mr-1"></i> Pending Verification</span>';
+
+        return `
+          <div class="card order-card mb-4">
+            <div class="card-body">
+              <!-- Top Header: Order ID & Status -->
+              <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3 flex-wrap">
+                <div>
+                  <span class="h6 font-weight-bold text-dark mr-2">Order #${o.order_id}</span>
+                  <span class="text-muted small"><i class="far fa-calendar-alt mr-1"></i> ${o.date || 'Today'}</span>
+                </div>
+                <div>
+                  ${statusBadge}
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- Crop & Pricing Info -->
+                <div class="col-md-5 mb-3 mb-md-0">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success text-white rounded p-3 text-center mr-3" style="width:55px;height:55px;display:flex;align-items:center;justify-content:center;">
+                      <i class="fas fa-seedling fa-lg"></i>
+                    </div>
+                    <div>
+                      <h5 class="font-weight-bold text-dark mb-0">${o.crop_name}</h5>
+                      <span class="badge badge-light border text-muted">Crop Order</span>
+                    </div>
+                  </div>
+                  <div class="pl-1">
+                    <div class="d-flex justify-content-between py-1 border-bottom small">
+                      <span class="text-muted">Ordered Quantity:</span>
+                      <strong>${o.quantity} kg</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom small">
+                      <span class="text-muted">Rate / Price:</span>
+                      <strong>₹${Number(o.price || 0).toLocaleString('en-IN')} / kg</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom small">
+                      <span class="text-muted">Payment Type:</span>
+                      <span class="badge badge-info">${o.payment_type || 'COD'}</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1 border-bottom small">
+                      <span class="text-muted">Payment Status / Ref:</span>
+                      <span>
+                        <strong class="badge ${(o.payment_status || '').includes('Paid') ? 'badge-success' : 'badge-secondary'}">${o.payment_status || 'Pay on Delivery'}</strong>
+                        <small class="text-muted ml-1">${o.transaction_id || ('TXN-' + o.order_id)}</small>
+                      </span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 small">
+                      <span class="font-weight-bold text-dark">Total Order Value:</span>
+                      <strong class="text-success h6 font-weight-bold mb-0">₹${Number(o.total_amount || 0).toLocaleString('en-IN')}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Customer Information Box (User Request) -->
+                <div class="col-md-7">
+                  <div class="customer-info-box h-100 d-flex flex-column justify-content-between">
+                    <div>
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="font-weight-bold text-success small text-uppercase">
+                          <i class="fas fa-user-circle mr-1"></i> Customer Information (ग्राहक की जानकारी)
+                        </span>
+                        ${o.cust_phone ? `
+                          <a href="tel:${o.cust_phone}" class="btn btn-sm btn-success font-weight-bold py-1 px-2" style="font-size:12px;">
+                            <i class="fas fa-phone-alt mr-1"></i> Call Customer
+                          </a>
+                        ` : ''}
+                      </div>
+
+                      <div class="row small mb-2">
+                        <div class="col-sm-6 mb-1">
+                          <span class="text-muted">Customer Name:</span><br/>
+                          <strong class="text-dark"><i class="fas fa-user text-muted mr-1"></i> ${o.cust_name || 'Customer'}</strong>
+                        </div>
+                        <div class="col-sm-6 mb-1">
+                          <span class="text-muted">Contact Mobile:</span><br/>
+                          <strong class="text-primary"><i class="fas fa-phone text-muted mr-1"></i> ${o.cust_phone || 'N/A'}</strong>
+                        </div>
+                      </div>
+
+                      <div class="small mb-2">
+                        <span class="text-muted">Delivery Address:</span><br/>
+                        <div class="text-dark bg-white p-2 rounded border mt-1">
+                          <i class="fas fa-map-marker-alt text-danger mr-1"></i> 
+                          <strong>${o.delivery_address || 'Address not specified'}</strong>, 
+                          <span>${o.city || 'Pune'}</span>
+                          ${o.pincode ? ` - <strong>PIN: ${o.pincode}</strong>` : ''}
+                        </div>
+                      </div>
+
+                      ${o.landmark || o.notes ? `
+                        <div class="small mb-2">
+                          <span class="text-muted">Landmark / Instructions:</span><br/>
+                          <span class="badge badge-light border text-dark text-wrap text-left p-2">
+                            <i class="fas fa-info-circle text-info mr-1"></i> ${o.landmark || o.notes}
+                          </span>
+                        </div>
+                      ` : ''}
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="pt-2 border-top mt-2 d-flex justify-content-between align-items-center flex-wrap">
+                      <span class="small text-muted">
+                        <i class="fas fa-user-check text-success mr-1"></i> Verified Buyer (${o.cust_email || 'ananya.sharma@example.com'})
+                      </span>
+                      ${isReady ? `
+                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                          <i class="fas fa-check-double text-success mr-1"></i> Marked Ready for Pickup
+                        </button>
+                      ` : `
+                        <button class="btn btn-sm btn-success font-weight-bold" onclick="markReady(${o.order_id}, '${o.crop_name}')">
+                          <i class="fas fa-box mr-1"></i> Mark Ready for Pickup
+                        </button>
+                      `}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function markReady(orderId, cropName) {
+      SmartKrushi.markOrderReady(orderId, cropName);
+      alert('✅ Order #' + orderId + ' ko "Ready for Pickup" mark kar diya gaya hai!');
+      allOrders = SmartKrushi.getFarmerOrders(currentFarmer.farmer_id || 63);
+      updateStats();
+      renderOrders();
+    }
+
+    // Initial Load
+    updateStats();
+    renderOrders();
+  </script>
+</body>
+</html>

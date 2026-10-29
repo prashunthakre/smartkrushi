@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selling History - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body { background: #f4f8f6; }
+    .card-box { background: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); padding: 24px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-light bg-success text-white py-3">
+    <div class="container d-flex justify-content-between">
+      <div><strong><i class="fas fa-history mr-2"></i> Selling History</strong></div>
+      <div>
+        <a href="fdashboard.html" class="text-white mr-3">Dashboard</a>
+        <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-light btn-sm">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="card-box">
+      <h3 class="mb-4">Sales Overview</h3>
+      <div id="historyTable" class="table-responsive"></div>
+    </div>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('farmer')) {
+      // Redirects automatically
+    }
+    const user = SmartKrushi.getFarmerSession() || {};
+    const orders = SmartKrushi.getFarmerOrders(user.farmer_id || 63);
+
+    const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+    document.getElementById('historyTable').innerHTML = `
+      <div class="mb-3">
+        <strong>Total Revenue :</strong> <span class="text-success">₹${totalRevenue.toLocaleString('en-IN')}</span>
+      </div>
+      <table class="table table-hover align-middle">
+        <thead class="thead-dark">
+          <tr>
+            <th>Order ID</th>
+            <th>Customer Details</th>
+            <th>Delivery Address</th>
+            <th>Crop</th>
+            <th>Qty</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${orders.length ? orders.map(o => `
+            <tr>
+              <td><span class="font-weight-bold text-dark">#${o.order_id}</span></td>
+              <td>
+                <div class="font-weight-bold">${o.cust_name || 'Customer'}</div>
+                <div class="small text-muted"><i class="fas fa-phone mr-1"></i>${o.cust_phone || 'N/A'}</div>
+              </td>
+              <td>
+                <div class="small text-dark font-weight-bold">${o.delivery_address || 'Address'}</div>
+                <div class="small text-muted">${o.city || 'Pune'}${o.pincode ? ' - ' + o.pincode : ''}</div>
+              </td>
+              <td><span class="badge badge-light border text-dark font-weight-bold">${o.crop_name}</span></td>
+              <td><strong>${o.quantity} kg</strong></td>
+              <td><span class="text-success font-weight-bold">₹${Number(o.total_amount || 0).toLocaleString('en-IN')}</span></td>
+              <td><span class="badge ${(o.order_status || '').toLowerCase().includes('ready') ? 'badge-success' : 'badge-warning'}">${o.order_status}</span></td>
+            </tr>
+          `).join('') : '<tr><td colspan="7" class="text-center text-muted py-4">No sales recorded yet.</td></tr>'}
+        </tbody>
+      </table>
+    `;
+  </script>
+</body>
+</html>

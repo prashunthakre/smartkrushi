@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="assets/img/logo.png" />
+  <title>Contact Us - SmartKrushi</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/custom-modern.css" type="text/css">
+
+  <style>
+    body { background-color: #f8fafc; font-family: 'Open Sans', Arial, sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1a7f5a, #1969b3); color: white; padding: 12px 0; }
+    .contact-card {
+      border: none; border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      background: white; padding: 35px;
+    }
+    .info-card {
+      background: linear-gradient(135deg, #1d9c7b, #1969b3);
+      color: white; border-radius: 16px; padding: 35px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+    .icon-box {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-right: 15px; flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg topbar sticky-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand text-white font-weight-bold" href="index.html">
+        <i class="fas fa-seedling mr-2"></i> SmartKrushi
+      </a>
+      <button class="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#navContact">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navContact">
+        <ul class="navbar-nav ml-auto align-items-center">
+          <li class="nav-item"><a href="index.html" class="nav-link text-white mr-2">Home</a></li>
+          <li class="nav-item"><a href="customer/cbuy_crops.html" class="nav-link text-white mr-2">Marketplace</a></li>
+          <li class="nav-item active"><a href="contact.html" class="nav-link text-white mr-2 font-weight-bold">Contact</a></li>
+          <li class="nav-item dropdown">
+            <a class="btn btn-light btn-sm dropdown-toggle font-weight-bold" href="#" data-toggle="dropdown">
+              <i class="fas fa-user-circle mr-1"></i> Portals
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="farmer/flogin.html"><i class="fas fa-tractor text-success mr-2"></i> Farmer Portal</a>
+              <a class="dropdown-item" href="customer/clogin.html"><i class="fas fa-shopping-cart text-info mr-2"></i> Customer Portal</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="admin/alogin.html"><i class="fas fa-user-shield text-warning mr-2"></i> Admin Portal</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container py-5">
+    <div class="text-center mb-5">
+      <h2 class="font-weight-bold mb-2">Get in Touch with SmartKrushi</h2>
+      <p class="text-muted">Have queries about AI crop recommendations, mandi trading, or government schemes? We are here to help!</p>
+    </div>
+
+    <div class="row">
+      <!-- Contact Form -->
+      <div class="col-lg-7 mb-4">
+        <div class="contact-card">
+          <h4 class="font-weight-bold mb-4"><i class="fas fa-paper-plane text-success mr-2"></i> Send us a Message</h4>
+          <div id="contactAlert" class="alert alert-success d-none">
+            <i class="fas fa-check-circle mr-1"></i> Thank you! Your message has been received. Our agriculture helpline expert will respond shortly.
+          </div>
+          <form id="contactForm" onsubmit="return handleContact(event)">
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label class="font-weight-bold small">Your Full Name</label>
+                <input type="text" id="cName" class="form-control" placeholder="e.g. Ramesh Kulkarni" required>
+              </div>
+              <div class="col-md-6 form-group">
+                <label class="font-weight-bold small">Mobile Number</label>
+                <input type="tel" id="cPhone" class="form-control" placeholder="e.g. 9876543210" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="font-weight-bold small">Email Address</label>
+              <input type="email" id="cEmail" class="form-control" placeholder="name@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="font-weight-bold small">State / District</label>
+              <input type="text" id="cAddress" class="form-control" placeholder="e.g. Pune, Maharashtra" required>
+            </div>
+
+            <div class="form-group">
+              <label class="font-weight-bold small">Message / Query</label>
+              <textarea id="cMessage" class="form-control" rows="4" placeholder="How can our agriculture advisory support you?" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block font-weight-bold py-2 shadow-sm">
+              <i class="fas fa-envelope mr-1"></i> Send Query
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="col-lg-5 mb-4">
+        <div class="info-card h-100 d-flex flex-column justify-content-between">
+          <div>
+            <h4 class="font-weight-bold mb-4">Helpline & Support</h4>
+
+            <div class="d-flex align-items-center mb-4">
+              <div class="icon-box"><i class="fas fa-phone-alt"></i></div>
+              <div>
+                <small class="text-white-50">Toll-Free Kisan Call Center</small>
+                <div class="font-weight-bold h5 mb-0">1800-180-1551</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center mb-4">
+              <div class="icon-box"><i class="fas fa-envelope-open-text"></i></div>
+              <div>
+                <small class="text-white-50">Support Email</small>
+                <div class="font-weight-bold">support@smartkrushi.gov.in</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center mb-4">
+              <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <small class="text-white-50">Krishi Bhavan Office</small>
+                <div class="font-weight-bold">Shivaji Nagar, Pune, Maharashtra 411005</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-top border-light">
+            <small class="text-white-50 d-block mb-2">Service Hours: Mon - Sat (9:00 AM - 6:00 PM)</small>
+            <div class="small">Dedicated to farmer welfare, precision agriculture, and transparent crop trading.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center bg-dark text-white">
+    <div class="container">
+      <small>© 2024 SmartKrushi Portal. Empowering Farmers with AI & Direct Trade.</small>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/smart_krushi_core.js"></script>
+  <script>
+    function handleContact(e) {
+      e.preventDefault();
+      SmartKrushi.saveContactMessage({
+        name: document.getElementById('cName').value,
+        phone: document.getElementById('cPhone').value,
+        email: document.getElementById('cEmail').value,
+        address: document.getElementById('cAddress').value,
+        message: document.getElementById('cMessage').value
+      });
+      document.getElementById('contactAlert').classList.remove('d-none');
+      document.getElementById('contactForm').reset();
+      return false;
+    }
+  </script>
+</body>
+</html>

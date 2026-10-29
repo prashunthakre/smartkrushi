@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Order History - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body { background: #f3f7f4; font-family: 'Open Sans', Arial, sans-serif; }
+    .topbar { background: linear-gradient(90deg, #1a7f5a, #1969b3); color: white; }
+    .order-card { background: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: none; }
+    .badge-ready { background-color: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; }
+    .badge-pending { background-color: #ffc107; color: #212529; padding: 6px 12px; border-radius: 20px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <strong><i class="fas fa-leaf mr-2"></i>SmartKrushi Market</strong>
+      </div>
+      <div class="d-flex align-items-center">
+        <a href="cbuy_crops.html" class="text-white mr-3"><i class="fas fa-store mr-1"></i> Market</a>
+        <a href="ccart.html" class="text-white mr-3"><i class="fas fa-shopping-cart mr-1"></i> Cart</a>
+        <a href="cprofile.html" class="text-white mr-3"><i class="fas fa-user-circle mr-1"></i> Profile</a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="fas fa-power-off mr-1"></i> Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="font-weight-bold mb-1"><i class="fas fa-receipt text-success mr-2"></i> My Order History</h3>
+        <p class="text-muted small mb-0">Track all your purchased crops and real-time order status</p>
+      </div>
+      <div>
+        <button class="btn btn-outline-primary mr-2 font-weight-bold" onclick="SmartKrushi.openPortalNotificationModal()">
+          <i class="fas fa-bell mr-1"></i> Live Mandi & Weather Notifications <span class="badge badge-primary ml-1">6</span>
+        </button>
+        <a href="cbuy_crops.html" class="btn btn-success"><i class="fas fa-plus-circle mr-1"></i> Buy More Crops</a>
+      </div>
+    </div>
+
+    <div class="card order-card p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="thead-light">
+            <tr>
+              <th>Order ID</th>
+              <th>Crop Name</th>
+              <th>Quantity</th>
+              <th>Delivery Address</th>
+              <th>Total Price</th>
+              <th>Payment</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Invoice</th>
+            </tr>
+          </thead>
+          <tbody id="orderListBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div id="noOrdersAlert" class="alert alert-info text-center mt-3 d-none">
+        You have no previous orders yet. <a href="cbuy_crops.html" class="alert-link font-weight-bold">Browse the market</a> to place your first order!
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/smart_krushi_core.js"></script>
+  <script>
+    if (!SmartKrushi.requireAuth('customer')) {
+      // Redirects automatically
+    }
+
+    function logout() {
+      SmartKrushi.logout('customer');
+    }
+
+    function renderOrderHistory() {
+      const customer = SmartKrushi.getCustomerSession();
+      if (!customer) {
+        SmartKrushi.logout('customer');
+        return;
+      }
+      const orders = SmartKrushi.getCustomerOrders(customer);
+      const tbody = document.getElementById('orderListBody');
+      const alertBox = document.getElementById('noOrdersAlert');
+
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = '';
+        alertBox.classList.remove('d-none');
+        return;
+      }
+
+      alertBox.classList.add('d-none');
+      tbody.innerHTML = orders.map(o => {
+        const orderId = (o.order_id || o.id || '').toString().replace('#', '');
+        const cropName = o.crop_name || o.crop || 'Crop';
+        const qty = o.quantity ? `${o.quantity} kg` : (o.qty || '1 kg');
+        const deliveryAddress = o.delivery_address || (o.address ? o.address.split('\n')[0] : 'Address');
+        const cityInfo = o.city ? `${o.city}${o.pincode ? ' - ' + o.pincode : ''}` : '';
+        const phone = o.cust_phone || (o.address && o.address.includes('\n') ? o.address.split('\n')[1] : '');
+        const total = o.total_amount ? `₹${Number(o.total_amount).toLocaleString('en-IN')}` : (o.price || '₹0');
+        const payment = o.payment_type || o.payment || 'COD';
+        const payStatus = o.payment_status || (payment.toLowerCase().includes('online') ? 'Paid Online' : 'Pay on Delivery');
+        const txnId = o.transaction_id || ('TXN-' + orderId);
+        const status = o.order_status || o.status || 'Pending';
+        const isReady = status.toLowerCase().includes('ready');
+        const badgeClass = isReady ? 'badge-ready' : 'badge-pending';
+        const badgeIcon = isReady ? 'fa-check-circle' : 'fa-clock';
+        return `
+          <tr>
+            <td><strong>#${orderId}</strong></td>
+            <td><i class="fas fa-seedling text-success mr-1"></i> <strong>${cropName}</strong></td>
+            <td>${qty}</td>
+            <td>
+              <div class="small text-dark font-weight-bold">${deliveryAddress}</div>
+              ${cityInfo ? `<div class="small text-muted">${cityInfo}</div>` : ''}
+              ${phone ? `<div class="small text-muted"><i class="fas fa-phone mr-1"></i>${phone}</div>` : ''}
+            </td>
+            <td><strong class="text-success">${total}</strong></td>
+            <td>
+              <span class="badge badge-light border">${payment}</span>
+              <div class="small mt-1">
+                <span class="badge ${payStatus === 'Paid Online' ? 'badge-success' : 'badge-info'}">${payStatus}</span>
+                <small class="text-muted d-block">${txnId}</small>
+              </div>
+            </td>
+            <td><small class="text-muted">${o.date || 'Recent'}</small></td>
+            <td>
+              <span class="${badgeClass}">
+                <i class="fas ${badgeIcon} mr-1"></i> ${status}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-outline-primary btn-sm" onclick="printInvoice('${orderId}', '${cropName}', '${qty}', '${total}', '${payment} (${txnId})', '${o.date || 'Today'}', '${(o.cust_name || customer.name || 'Buyer').replace(/'/g, '')}', '${deliveryAddress.replace(/'/g, '')}')">
+                <i class="fas fa-print mr-1"></i> Bill
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function printInvoice(orderId, crop, qty, total, payment, date, buyer, addr) {
+      const w = window.open('', '_blank', 'width=720,height=620');
+      w.document.write(`
+        <html><head><title>Invoice #${orderId} - SmartKrushi</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 30px; color: #1e293b; }
+          .hdr { border-bottom: 3px solid #16a34a; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: left; }
+          th { background: #f1f5f9; }
+          .tot { font-size: 18px; font-weight: bold; color: #16a34a; }
+        </style></head><body>
+          <div class="hdr">
+            <div>
+              <h2 style="margin:0;color:#16a34a;">SmartKrushi Direct F2C Market</h2>
+              <small>100% Farmer-to-Consumer Tax-Exempt Agricultural Produce Receipt</small>
+            </div>
+            <div style="text-align:right;">
+              <strong>INVOICE #${orderId}</strong><br><small>Date: ${date}</small>
+            </div>
+          </div>
+          <p><strong>Billed To:</strong> ${buyer}<br><strong>Delivery Address:</strong> ${addr}<br><strong>Payment Mode:</strong> ${payment}</p>
+          <table>
+            <thead><tr><th>Produce Description</th><th>Quantity</th><th>Brokerage / GST</th><th>Total Payable</th></tr></thead>
+            <tbody><tr><td>${crop} (Direct Farm Harvest)</td><td>${qty}</td><td>₹0 (0% Commission)</td><td class="tot">${total}</td></tr></tbody>
+          </table>
+          <p style="margin-top:30px;font-size:12px;color:#64748b;text-align:center;">Thank you for supporting Indian Farmers directly via SmartKrushi Portal!</p>
+          <script>window.print();<\/script>
+        </body></html>
+      `);
+      w.document.close();
+    }
+
+    renderOrderHistory();
+  </script>
+</body>
+</html>

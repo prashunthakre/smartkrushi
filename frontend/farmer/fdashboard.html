@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png" />
+  <title>Farmer Dashboard - SmartKrushi</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+  <link rel="stylesheet" href="../assets/css/custom-modern.css">
+  <style>
+    body { background: #f4f5f7; }
+    .navbar-custom {
+      background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 0.7rem 1rem;
+    }
+    .navbar-brand { font-weight: 800; font-size: 1.5rem; color: white !important; text-transform: uppercase; }
+    .navbar-dark .navbar-nav .nav-link { color: white !important; font-weight: 600; transition: all 0.3s ease; margin: 0 5px; border-radius: 5px; }
+    .navbar-dark .navbar-nav .nav-link:hover { background: rgba(255,255,255,0.2); }
+    .dropdown-menu { border: none; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .dropdown-item:hover { background-color: #f6f9fc; color: #2dce89; padding-left: 25px; }
+
+    .dashboard-card {
+      border: none; border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      overflow: hidden; cursor: pointer;
+      text-decoration: none; color: inherit;
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      text-decoration: none; color: inherit;
+    }
+    .card-icon {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: white;
+    }
+    .stats-card { padding: 20px; }
+    .stats-number { font-size: 2rem; font-weight: 700; }
+    .welcome-banner {
+      background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%);
+      border-radius: 15px; color: white; padding: 30px; margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="fdashboard.html"><i class="fas fa-leaf mr-2"></i> SmartKrushi</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navbar_global">
+      <ul class="navbar-nav ml-auto align-items-center">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-brain mr-1"></i> AI Predictions</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="fcrop_prediction.html"><i class="fas fa-seedling text-success"></i> Crop Prediction</a>
+            <a class="dropdown-item" href="fcrop_recommendation.html"><i class="fas fa-microscope text-primary"></i> Soil NPK Crop Recommendation</a>
+            <a class="dropdown-item" href="ffertilizer_suggestion.html"><i class="fas fa-flask text-info"></i> Fertilizer Suggestion</a>
+            <a class="dropdown-item" href="fyield_prediction.html"><i class="fas fa-chart-bar text-warning"></i> Yield Prediction</a>
+            <a class="dropdown-item" href="frainfall_prediction.html"><i class="fas fa-cloud-rain text-primary"></i> Rainfall Prediction</a>
+            <a class="dropdown-item" href="fweather_forecast.html"><i class="fas fa-cloud-sun text-danger"></i> 5-Day Weather & AI Chatbot</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><i class="fas fa-exchange-alt mr-1"></i> Trade</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="ftradecrops.html"><i class="fas fa-plus-circle text-primary"></i> Trade Crops</a>
+            <a class="dropdown-item" href="fstock_crop.html"><i class="fas fa-boxes text-info"></i> Crop Stocks</a>
+            <a class="dropdown-item" href="fselling_history.html"><i class="fas fa-history text-muted"></i> Selling History</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="fmanage_orders.html"><i class="fas fa-box-open text-success"></i> Fulfill Orders</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="SmartKrushi.openPortalNotificationModal(); return false;" class="nav-link">
+            <i class="fas fa-bell mr-1"></i> Notifications <span class="badge badge-warning ml-1">6</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="fprofile.html" class="nav-link"><i class="fas fa-user-circle mr-1"></i> <span id="navUsername">Farmer</span></a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="SmartKrushi.logout('farmer'); return false;" class="btn btn-white btn-sm px-3 ml-lg-3 text-danger font-weight-bold shadow-sm">
+            <i class="fas fa-power-off"></i> Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="container mt-4">
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h2 class="mb-2">Welcome, <span id="welcomeName">Farmer</span>! 🌾</h2>
+        <p class="mb-0">Manage your crops, get AI-powered predictions, and trade with customers — all in one place.</p>
+      </div>
+      <div class="col-md-4 text-right d-none d-md-block">
+        <i class="fas fa-tractor" style="font-size:80px; opacity:0.3;"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card dashboard-card">
+        <div class="stats-card d-flex align-items-center">
+          <div class="card-icon bg-success mr-3"><i class="fas fa-seedling"></i></div>
+          <div>
+            <div class="text-muted small text-uppercase">Crops Listed</div>
+            <div class="stats-number text-success" id="statCrops">5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card dashboard-card">
+        <div class="stats-card d-flex align-items-center">
+          <div class="card-icon bg-primary mr-3"><i class="fas fa-shopping-cart"></i></div>
+          <div>
+            <div class="text-muted small text-uppercase">Orders</div>
+            <div class="stats-number text-primary" id="statOrders">12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card dashboard-card">
+        <div class="stats-card d-flex align-items-center">
+          <div class="card-icon bg-warning mr-3"><i class="fas fa-rupee-sign"></i></div>
+          <div>
+            <div class="text-muted small text-uppercase">Revenue</div>
+            <div class="stats-number text-warning" id="statRevenue">₹48K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card dashboard-card">
+        <div class="stats-card d-flex align-items-center">
+          <div class="card-icon bg-info mr-3"><i class="fas fa-star"></i></div>
+          <div>
+            <div class="text-muted small text-uppercase">Rating</div>
+            <div class="stats-number text-info">4.8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Mandi & Weather Notification Box -->
+  <div class="card dashboard-card mb-4 p-4">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 flex-wrap">
+      <div>
+        <h5 class="font-weight-bold mb-0 text-dark">
+          <i class="fas fa-satellite-dish text-success mr-2"></i>Live Mandi & Weather Notifications
+        </h5>
+        <small class="text-muted">Real-Time APMC Mandi Rates & Live Open-Meteo Weather Updates</small>
+      </div>
+      <div class="mt-2 mt-sm-0">
+        <button class="btn btn-sm btn-outline-success font-weight-bold mr-1" onclick="loadDashboardLiveNotifications()">
+          <i class="fas fa-sync-alt mr-1"></i> Refresh Live
+        </button>
+        <button class="btn btn-sm btn-success font-weight-bold" onclick="SmartKrushi.openPortalNotificationModal()">
+          <i class="fas fa-bell mr-1"></i> View All Live Alerts
+        </button>
+      </div>
+    </div>
+    <div id="dashboardLiveNotifBox" class="row">
+      <div class="col-12 text-center py-3 text-muted small">
+        <i class="fas fa-spinner fa-spin mr-1"></i> Loading Live Mandi & Weather Notifications...
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <h4 class="mb-3"><i class="fas fa-th-large text-success"></i> Quick Actions</h4>
+  <div class="row">
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fcrop_prediction.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-success mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-seedling"></i>
+          </div>
+          <h5>Crop Prediction</h5>
+          <p class="text-muted small">AI-powered crop recommendation based on soil & climate data</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="ffertilizer_suggestion.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-info mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-flask"></i>
+          </div>
+          <h5>Fertilizer Suggestion</h5>
+          <p class="text-muted small">Get the best fertilizer for your soil conditions</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="ftradecrops.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-primary mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <h5>Trade Crops</h5>
+          <p class="text-muted small">List your crops for sale to customers</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fstock_crop.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-warning mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-boxes"></i>
+          </div>
+          <h5>Crop Stocks</h5>
+          <p class="text-muted small">View and manage your crop inventory</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fmanage_orders.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-danger mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-box-open"></i>
+          </div>
+          <h5>Manage Orders</h5>
+          <p class="text-muted small">Fulfill and track customer orders</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fselling_history.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-dark mx-auto mb-3" style="width:80px;height:80px;font-size:32px;">
+            <i class="fas fa-history"></i>
+          </div>
+          <h5>Selling History</h5>
+          <p class="text-muted small">Track your past sales and revenue</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fcrop_recommendation.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon bg-success mx-auto mb-3" style="width:80px;height:80px;font-size:32px;background:#11998e!important;">
+            <i class="fas fa-microscope"></i>
+          </div>
+          <h5>Soil NPK Recommendation</h5>
+          <p class="text-muted small">Recommend crops from Soil Health Card N-P-K & pH</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fyield_prediction.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon mx-auto mb-3" style="width:80px;height:80px;font-size:32px;background:#f5365c;">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h5>Yield & Revenue Predictor</h5>
+          <p class="text-muted small">Estimate harvest Quintals/Acre & direct MSP revenue</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-lg-4 col-md-6 mb-4">
+      <a href="fweather_forecast.html" class="card dashboard-card h-100">
+        <div class="card-body text-center py-5">
+          <div class="card-icon mx-auto mb-3" style="width:80px;height:80px;font-size:32px;background:#1171ef;">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h5>5-Day Weather & AI Chatbot</h5>
+          <p class="text-muted small">Live Open-Meteo 5-day forecast & 24×7 AI Kisan Sahayak</p>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-4 mt-5" style="background:#1a1a2e; color:white;">
+  <div class="container text-center">
+    <p class="mb-0">© 2026 SmartKrushi Agriculture Portal | Direct F2C & AI Crop Advisory System</p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="../js/smart_krushi_core.js"></script>
+<script>
+  // Strict Authentication Guard
+  if (!SmartKrushi.requireAuth('farmer')) {
+    // Redirects automatically via location.replace
+  } else {
+    var user = SmartKrushi.getFarmerSession();
+    if (!user) {
+      SmartKrushi.logout('farmer');
+    } else {
+      document.getElementById('welcomeName').textContent = user.name || 'Farmer';
+      document.getElementById('navUsername').textContent = user.name || 'Farmer';
+
+      // Dynamically calculate live farmer stats
+      var allCrops = SmartKrushi.getCrops();
+      var myCrops = allCrops.filter(c => c.farmer_id == user.farmer_id || c.farmer_name == user.name);
+      var orders = SmartKrushi.getFarmerOrders(user.farmer_id || 63);
+      var revenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+      document.getElementById('statCrops').textContent = (myCrops.length > 0 ? myCrops.length : allCrops.length);
+      document.getElementById('statOrders').textContent = orders.length;
+      document.getElementById('statRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+
+      loadDashboardLiveNotifications();
+    }
+  }
+
+  async function loadDashboardLiveNotifications() {
+    var box = document.getElementById('dashboardLiveNotifBox');
+    if (!box) return;
+    var alerts = await SmartKrushi.fetchLiveMandiAndWeatherAlerts();
+    box.innerHTML = alerts.slice(0, 4).map(function(item) {
+      return '<div class="col-md-6 mb-2">' +
+        '<div class="border rounded p-3 h-100 bg-light" style="border-left: 4px solid ' + (item.category === 'mandi' ? '#16a34a' : '#0284c7') + ' !important;">' +
+          '<div class="d-flex justify-content-between align-items-center mb-1">' +
+            '<span class="badge ' + item.badgeClass + ' px-2 py-1">' + item.badge + '</span>' +
+            '<small class="text-muted font-weight-bold"><i class="far fa-clock mr-1"></i>' + item.time + '</small>' +
+          '</div>' +
+          '<div class="font-weight-bold text-dark small mt-1 mb-1"><i class="' + item.icon + ' mr-1"></i> ' + item.title + '</div>' +
+          '<div class="small text-secondary mb-0">' + item.message + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+</script>
+</body>
+</html>
