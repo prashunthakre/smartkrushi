@@ -287,9 +287,9 @@
         var res = SmartKrushi.auth.sendOtp(ident, 'farmer');
         if (res.success) {
             stepAlert.className = 'alert alert-success small py-2';
-            stepAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit OTP sent to <strong>${res.email}</strong>.<br><span class="badge badge-success mt-1" style="font-size:13px;letter-spacing:2px;">OTP: ${res.otp}</span>`;
+            stepAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit OTP sent to your registered Gmail: <strong>${res.email}</strong>.<br><small class="text-muted">Please check your Gmail Inbox (or Spam) and enter the 6-digit OTP below.</small>`;
             stepAlert.classList.remove('d-none');
-            document.getElementById('otpCodeInput').value = res.otp;
+            document.getElementById('otpCodeInput').value = '';
             document.getElementById('otpStep2').classList.remove('d-none');
             document.getElementById('otpCodeInput').focus();
         } else {
@@ -344,11 +344,11 @@
         var res = SmartKrushi.auth.sendPasswordResetOtp(ident, 'farmer');
         if (res.success) {
             resetAlert.className = 'alert alert-info small py-2';
-            resetAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit Password Reset OTP sent to <strong>${res.email}</strong>.<br><span class="badge badge-primary mt-1" style="font-size:13px;letter-spacing:2px;">OTP: ${res.otp}</span>`;
+            resetAlert.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit Password Reset OTP sent to your registered Gmail: <strong>${res.email}</strong>.<br><small class="text-muted">Please check your Gmail Inbox (or Spam) and enter the OTP below.</small>`;
             resetAlert.classList.remove('d-none');
             document.getElementById('resetOtpBox').classList.remove('d-none');
             document.getElementById('resetPasswordFieldsBox').classList.add('d-none');
-            document.getElementById('resetOtpInput').value = res.otp;
+            document.getElementById('resetOtpInput').value = '';
             document.getElementById('resetOtpInput').readOnly = false;
             document.getElementById('resetOtpInput').focus();
             startFarmerResetCountdown(600);
