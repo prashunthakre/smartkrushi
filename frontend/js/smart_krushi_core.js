@@ -586,21 +586,20 @@ SmartKrushi.initMarketplace();
 // =============================================================
 SmartKrushi.getRegisteredUsers = function(type) {
     const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
-    let users = [];
-    try {
-        const data = localStorage.getItem(key);
-        if (data) {
-            users = JSON.parse(data);
+    const data = localStorage.getItem(key);
+    if (data !== null) {
+        try {
+            return JSON.parse(data);
+        } catch(e) {
+            return [];
         }
-    } catch(e) {
-        users = [];
     }
 
-    // Ensure primary testing account (kushora.otp@gmail.com) is always seeded
-    const hasKushora = users.some(u => (u.email || '').toLowerCase() === 'kushora.otp@gmail.com');
-    if (!hasKushora) {
-        if (type === 'farmer') {
-            users.unshift({
+    // Seed ONLY ONCE on initial browser startup
+    let initialUsers = [];
+    if (type === 'farmer') {
+        initialUsers = [
+            {
                 farmer_id: 60,
                 name: "Prashun Thakre",
                 email: "kushora.otp@gmail.com",
@@ -609,9 +608,21 @@ SmartKrushi.getRegisteredUsers = function(type) {
                 district: "Pune",
                 location: "Haveli",
                 password: "password123"
-            });
-        } else {
-            users.unshift({
+            },
+            {
+                farmer_id: 63,
+                name: "Prashun Thakre",
+                email: "prashun2203@gmail.com",
+                phone: "9876543211",
+                state: "Maharashtra",
+                district: "Pune",
+                location: "Haveli",
+                password: "password123"
+            }
+        ];
+    } else {
+        initialUsers = [
+            {
                 cust_id: 100,
                 name: "Prashun Thakre",
                 email: "kushora.otp@gmail.com",
@@ -621,27 +632,8 @@ SmartKrushi.getRegisteredUsers = function(type) {
                 state: "Maharashtra",
                 pincode: "411016",
                 password: "password123"
-            });
-        }
-        localStorage.setItem(key, JSON.stringify(users));
-    }
-
-    // Also ensure demo account is present
-    const hasDemo = users.some(u => (u.email || '').toLowerCase().includes('prashun2203') || (u.email || '').toLowerCase().includes('ananya'));
-    if (!hasDemo && users.length <= 1) {
-        if (type === 'farmer') {
-            users.push({
-                farmer_id: 63,
-                name: "Prashun Thakre",
-                email: "prashun2203@gmail.com",
-                phone: "9876543211",
-                state: "Maharashtra",
-                district: "Pune",
-                location: "Haveli",
-                password: "password123"
-            });
-        } else {
-            users.push({
+            },
+            {
                 cust_id: 101,
                 name: "Ananya Sharma",
                 email: "ananya.sharma@example.com",
@@ -651,12 +643,11 @@ SmartKrushi.getRegisteredUsers = function(type) {
                 state: "Maharashtra",
                 pincode: "411016",
                 password: "password123"
-            });
-        }
-        localStorage.setItem(key, JSON.stringify(users));
+            }
+        ];
     }
-
-    return users;
+    localStorage.setItem(key, JSON.stringify(initialUsers));
+    return initialUsers;
 };
 
 SmartKrushi.auth = {
@@ -2464,7 +2455,13 @@ SmartKrushi.updateOrderStatus = function(orderId, cropName, newStatus) {
 SmartKrushi.deleteUser = function(type, idOrEmail) {
     const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
     let users = this.getRegisteredUsers(type);
-    users = users.filter(u => u.farmer_id != idOrEmail && u.cust_id != idOrEmail && u.email !== idOrEmail);
+    const target = String(idOrEmail || '').trim().toLowerCase();
+    users = users.filter(u => {
+        const uEmail = (u.email || '').trim().toLowerCase();
+        const uFarmId = String(u.farmer_id || '');
+        const uCustId = String(u.cust_id || '');
+        return uEmail !== target && uFarmId !== target && uCustId !== target;
+    });
     localStorage.setItem(key, JSON.stringify(users));
     return true;
 };
