@@ -87,11 +87,16 @@ def init_db():
 
 def run_ml_script(script_rel_path, args):
     script_path = os.path.join(ML_DIR, *script_rel_path.split("/"))
-    cmd = [sys.executable, script_path] + [str(a) for a in args]
-    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
-    output = (proc.stdout or "").strip()
-    if proc.returncode != 0 and not output:
-        output = (proc.stderr or "ML execution error").strip()
+    try:
+        cmd = [sys.executable, script_path] + [str(a) for a in args]
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=45)
+        output = (proc.stdout or "").strip()
+        if proc.returncode != 0 and not output:
+            output = (proc.stderr or "ML execution error").strip()
+    except subprocess.TimeoutExpired:
+        output = "Prediction timed out during cold start. Please retry in a moment."
+    except Exception as e:
+        output = f"ML error: {str(e)}"
 
     try:
         conn = sqlite3.connect(DB_PATH)
