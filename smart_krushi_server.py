@@ -184,13 +184,18 @@ class SmartKrushiRequestHandler(SimpleHTTPRequestHandler):
         super().end_headers()
 
     def _send_json(self, data, status=200):
-        raw = json.dumps(data).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Content-Length", str(len(raw)))
-        self.end_headers()
-        self.wfile.write(raw)
+        try:
+            raw = json.dumps(data).encode("utf-8")
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+        except Exception:
+            pass
 
     def do_OPTIONS(self):
         self.send_response(200)
