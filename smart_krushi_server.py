@@ -112,6 +112,26 @@ def run_ml_script(script_rel_path, args):
     return output
 
 
+def send_via_brevo_api(api_key, sender_email, to_email, to_name, subject, html_body, text_body):
+    import urllib.request
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {"name": "SmartKrushi", "email": sender_email or "kushora.otp@gmail.com"},
+        "to": [{"email": to_email, "name": to_name or "User"}],
+        "subject": subject,
+        "htmlContent": html_body or f"<p>{text_body}</p>",
+        "textContent": text_body
+    }
+    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
+    resp = urllib.request.urlopen(req, timeout=10)
+    return resp.getcode() in (200, 201)
+
+
 def send_real_smtp_or_log(payload):
     to_email = payload.get("to_email", "")
     to_name = payload.get("to_name", "User")
@@ -123,10 +143,22 @@ def send_real_smtp_or_log(payload):
     html_body = payload.get("html_body", "")
 
     smtp_user, smtp_pass = load_smtp_credentials()
+    brevo_key = (os.environ.get("BREVO_API_KEY") or "").strip()
     delivery_status = "Pending SMTP App Password in .env"
     sent_live = False
 
-    if smtp_user and smtp_pass and to_email and "@" in to_email:
+    # 1. Prefer HTTPS-based Brevo API on Cloud Hosts (Bypasses Render Port 587 Blocking)
+    if brevo_key and to_email and "@" in to_email:
+        try:
+            ok = send_via_brevo_api(brevo_key, smtp_user, to_email, to_name, subject, html_body, body)
+            if ok:
+                delivery_status = "Sent via Brevo HTTPS API (200 OK)"
+                sent_live = True
+        except Exception as eb:
+            delivery_status = f"Brevo API Error: {str(eb)[:80]}"
+
+    # 2. Fallback to Gmail SMTP (Works on Localhost and servers with open port 587)
+    if not sent_live and smtp_user and smtp_pass and to_email and "@" in to_email:
         msg = MIMEMultipart("alternative")
         msg["From"] = "SmartKrushi No-Reply <no-reply@smartkrushi.in>"
         msg["Reply-To"] = "no-reply@smartkrushi.in"
