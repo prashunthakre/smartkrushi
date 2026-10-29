@@ -821,27 +821,6 @@ SmartKrushi.auth = {
             (cleanDigits.length >= 10 && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits.slice(-10))
         );
 
-        // Immediate Auto-Provision for primary testing / demo accounts
-        if (!user && (input === 'kushora.otp@gmail.com' || input === 'prashun2203@gmail.com')) {
-            user = {
-                farmer_id: 60,
-                cust_id: 100,
-                name: "Prashun Thakre",
-                email: input,
-                phone: "9876543210",
-                state: "Maharashtra",
-                district: "Pune",
-                location: "Haveli",
-                address: "Flat 402, Model Colony, Pune",
-                city: "Pune",
-                pincode: "411016",
-                password: pwd || "password123"
-            };
-            users.push(user);
-            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
-            localStorage.setItem(key, JSON.stringify(users));
-        }
-
         if (!user) {
             return { 
                 success: false, 
@@ -873,26 +852,6 @@ SmartKrushi.auth = {
             (u.email && u.email.toLowerCase() === raw) ||
             (cleanPhone.length >= 10 && (u.phone || '').replace(/\D/g, '').endsWith(cleanPhone.slice(-10)))
         );
-
-        if (!user && (raw === 'kushora.otp@gmail.com' || raw === 'prashun2203@gmail.com')) {
-            user = {
-                farmer_id: 60,
-                cust_id: 100,
-                name: "Prashun Thakre",
-                email: raw,
-                phone: "9876543210",
-                state: "Maharashtra",
-                district: "Pune",
-                location: "Haveli",
-                address: "Flat 402, Model Colony, Pune",
-                city: "Pune",
-                pincode: "411016",
-                password: "password123"
-            };
-            users.push(user);
-            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
-            localStorage.setItem(key, JSON.stringify(users));
-        }
 
         if (!user) {
             return {
@@ -970,26 +929,6 @@ SmartKrushi.auth = {
             (u.email && u.email.toLowerCase() === raw) ||
             (cleanPhone.length >= 10 && (u.phone || '').replace(/\D/g, '').endsWith(cleanPhone.slice(-10)))
         );
-
-        if (!user && (raw === 'kushora.otp@gmail.com' || raw === 'prashun2203@gmail.com')) {
-            user = {
-                farmer_id: 60,
-                cust_id: 100,
-                name: "Prashun Thakre",
-                email: raw,
-                phone: "9876543210",
-                state: "Maharashtra",
-                district: "Pune",
-                location: "Haveli",
-                address: "Flat 402, Model Colony, Pune",
-                city: "Pune",
-                pincode: "411016",
-                password: "password123"
-            };
-            users.push(user);
-            const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
-            localStorage.setItem(key, JSON.stringify(users));
-        }
 
         if (!user) {
             return {
@@ -2456,14 +2395,42 @@ SmartKrushi.deleteUser = function(type, idOrEmail) {
     const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
     let users = this.getRegisteredUsers(type);
     const target = String(idOrEmail || '').trim().toLowerCase();
+    const initialLen = users.length;
     users = users.filter(u => {
-        const uEmail = (u.email || '').trim().toLowerCase();
-        const uFarmId = String(u.farmer_id || '');
-        const uCustId = String(u.cust_id || '');
+        const uEmail = String(u.email || '').trim().toLowerCase();
+        const uFarmId = String(u.farmer_id || '').trim().toLowerCase();
+        const uCustId = String(u.cust_id || '').trim().toLowerCase();
         return uEmail !== target && uFarmId !== target && uCustId !== target;
     });
     localStorage.setItem(key, JSON.stringify(users));
-    return true;
+
+    // Clear session if the deleted user is currently logged in
+    try {
+        const sessFarmer = this.getFarmerSession();
+        if (sessFarmer && (String(sessFarmer.email || '').trim().toLowerCase() === target || String(sessFarmer.farmer_id) === target)) {
+            localStorage.removeItem('sk_farmer_session');
+            localStorage.removeItem('sk_logged_in');
+        }
+        const sessCust = this.getCustomerSession();
+        if (sessCust && (String(sessCust.email || '').trim().toLowerCase() === target || String(sessCust.cust_id) === target)) {
+            localStorage.removeItem('sk_customer_session');
+            localStorage.removeItem('sk_logged_in');
+        }
+    } catch(e) {}
+
+    return users.length < initialLen;
+};
+
+SmartKrushi.deleteUserByIndex = function(type, index) {
+    const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
+    let users = this.getRegisteredUsers(type);
+    const idx = parseInt(index, 10);
+    if (!isNaN(idx) && idx >= 0 && idx < users.length) {
+        const removed = users.splice(idx, 1);
+        localStorage.setItem(key, JSON.stringify(users));
+        return removed[0];
+    }
+    return null;
 };
 
 // =============================================================
