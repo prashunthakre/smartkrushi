@@ -586,28 +586,62 @@ SmartKrushi.initMarketplace();
 // =============================================================
 SmartKrushi.getRegisteredUsers = function(type) {
     const key = type === 'farmer' ? 'sk_registered_farmers' : 'sk_registered_customers';
-    const data = localStorage.getItem(key);
-    if (data) {
-        return JSON.parse(data);
+    let users = [];
+    try {
+        const data = localStorage.getItem(key);
+        if (data) {
+            users = JSON.parse(data);
+        }
+    } catch(e) {
+        users = [];
     }
-    // Seeded initial accounts
-    let initialUsers = [];
-    if (type === 'farmer') {
-        initialUsers = [
-            {
-                farmer_id: 63,
+
+    // Ensure primary testing account (kushora.otp@gmail.com) is always seeded
+    const hasKushora = users.some(u => (u.email || '').toLowerCase() === 'kushora.otp@gmail.com');
+    if (!hasKushora) {
+        if (type === 'farmer') {
+            users.unshift({
+                farmer_id: 60,
                 name: "Prashun Thakre",
-                email: "prashun2203@gmail.com",
+                email: "kushora.otp@gmail.com",
                 phone: "9876543210",
                 state: "Maharashtra",
                 district: "Pune",
                 location: "Haveli",
                 password: "password123"
-            }
-        ];
-    } else {
-        initialUsers = [
-            {
+            });
+        } else {
+            users.unshift({
+                cust_id: 100,
+                name: "Prashun Thakre",
+                email: "kushora.otp@gmail.com",
+                phone: "9876543210",
+                address: "Flat 402, Model Colony, Pune",
+                city: "Pune",
+                state: "Maharashtra",
+                pincode: "411016",
+                password: "password123"
+            });
+        }
+        localStorage.setItem(key, JSON.stringify(users));
+    }
+
+    // Also ensure demo account is present
+    const hasDemo = users.some(u => (u.email || '').toLowerCase().includes('prashun2203') || (u.email || '').toLowerCase().includes('ananya'));
+    if (!hasDemo && users.length <= 1) {
+        if (type === 'farmer') {
+            users.push({
+                farmer_id: 63,
+                name: "Prashun Thakre",
+                email: "prashun2203@gmail.com",
+                phone: "9876543211",
+                state: "Maharashtra",
+                district: "Pune",
+                location: "Haveli",
+                password: "password123"
+            });
+        } else {
+            users.push({
                 cust_id: 101,
                 name: "Ananya Sharma",
                 email: "ananya.sharma@example.com",
@@ -617,11 +651,12 @@ SmartKrushi.getRegisteredUsers = function(type) {
                 state: "Maharashtra",
                 pincode: "411016",
                 password: "password123"
-            }
-        ];
+            });
+        }
+        localStorage.setItem(key, JSON.stringify(users));
     }
-    localStorage.setItem(key, JSON.stringify(initialUsers));
-    return initialUsers;
+
+    return users;
 };
 
 SmartKrushi.auth = {

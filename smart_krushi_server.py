@@ -139,7 +139,7 @@ def send_real_smtp_or_log(payload):
             msg.attach(MIMEText(html_body, "html", "utf-8"))
 
         try:
-            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=12)
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=3)
             server.ehlo()
             server.starttls()
             server.ehlo()
@@ -150,14 +150,14 @@ def send_real_smtp_or_log(payload):
             sent_live = True
         except Exception:
             try:
-                server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=12)
+                server_ssl = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=3)
                 server_ssl.login(smtp_user, smtp_pass)
                 server_ssl.sendmail(smtp_user, [to_email], msg.as_string())
                 server_ssl.quit()
                 delivery_status = "Sent via Gmail SMTP SSL (250 OK)"
                 sent_live = True
             except Exception as e2:
-                delivery_status = f"SMTP Error: {str(e2)[:80]}"
+                delivery_status = f"SMTP Blocked/Error: {str(e2)[:80]}"
 
     try:
         conn = sqlite3.connect(DB_PATH)

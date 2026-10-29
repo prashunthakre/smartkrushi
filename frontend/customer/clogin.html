@@ -203,9 +203,9 @@
       const al = document.getElementById('custOtpAlert');
       if (res.success) {
         al.className = 'alert alert-success small py-2';
-        al.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit OTP has been sent to your registered Email ID (<strong>${res.email}</strong>). Please check your inbox and enter the OTP below.`;
+        al.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit OTP sent to <strong>${res.email}</strong>.<br><span class="badge badge-primary mt-1" style="font-size:13px;letter-spacing:2px;">OTP: ${res.otp}</span>`;
         al.classList.remove('d-none');
-        document.getElementById('custOtpCode').value = '';
+        document.getElementById('custOtpCode').value = res.otp;
         document.getElementById('custOtpVerifyBox').classList.remove('d-none');
         document.getElementById('custOtpCode').focus();
       } else {
@@ -254,11 +254,11 @@
       const res = SmartKrushi.auth.sendPasswordResetOtp(ident, 'customer');
       if (res.success) {
         al.className = 'alert alert-info small py-2';
-        al.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit Password Reset OTP has been sent to your Email ID (<strong>${res.email}</strong>). Please check your inbox, enter the OTP below, and click <strong>Verify OTP</strong>.`;
+        al.innerHTML = `<i class="fas fa-envelope-open-text mr-1"></i> 6-Digit Password Reset OTP sent to <strong>${res.email}</strong>.<br><span class="badge badge-info mt-1" style="font-size:13px;letter-spacing:2px;">OTP: ${res.otp}</span>`;
         al.classList.remove('d-none');
         document.getElementById('custResetOtpBox').classList.remove('d-none');
         document.getElementById('custResetPasswordFieldsBox').classList.add('d-none');
-        document.getElementById('custResetOtpInput').value = '';
+        document.getElementById('custResetOtpInput').value = res.otp;
         document.getElementById('custResetOtpInput').readOnly = false;
         document.getElementById('custResetOtpInput').focus();
         startCustResetCountdown(600);

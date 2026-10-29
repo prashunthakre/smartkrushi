@@ -177,8 +177,11 @@
       }
 
       document.getElementById('cVerifyEmailTarget').textContent = res.email;
-      document.getElementById('cVerifyOtpInput').value = '';
-      document.getElementById('cOtpVerifyAlert').classList.add('d-none');
+      document.getElementById('cVerifyOtpInput').value = res.otp;
+      const otpAlert = document.getElementById('cOtpVerifyAlert');
+      otpAlert.className = 'alert alert-info small py-2 text-center';
+      otpAlert.innerHTML = `<i class="fas fa-shield-alt mr-1"></i> Verification OTP: <span class="badge badge-primary font-weight-bold" style="font-size:14px;letter-spacing:2px;">${res.otp}</span>`;
+      otpAlert.classList.remove('d-none');
       document.getElementById('custVerifyModal').style.display = 'flex';
       document.getElementById('cVerifyOtpInput').focus();
       startCustRegTimer(600);
